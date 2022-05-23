@@ -24,5 +24,14 @@ settingsbutton.grid(row=4, column=2, rowspan=1, columnspan= 1, sticky=tk.N+tk.S+
 quitbutton = tk.Button(content, borderwidth = 10, background = 'white', relief = 'groove', text='Quit', height=1, command=lambda: root.destroy())
 quitbutton.grid(row=5, column=2, rowspan=1, columnspan= 1, sticky=tk.N+tk.S+tk.E+tk.W, padx=5, pady=5)
 
+# configuring all rows and columns for resizing
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
+
+for i in range (0, 5):
+    content.columnconfigure(i, weight=1)
+for i in range (0, 6):
+    content.rowconfigure(i, weight=1)
+
 # loop the window
 root.mainloop()
