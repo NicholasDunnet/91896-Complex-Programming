@@ -10,6 +10,16 @@ def getimagepath(filename):
     img_path = os.path.join(current_dir, filename) # join with your image's file name
     return img_path
 
+#creating gui functions
+def start():
+    print("Start")
+
+def instructions():
+    print("Instructions")
+
+def settings():
+    print("Settings")
+
 # setting up window
 root = tk.Tk()
 root.title('TIMUS')    
@@ -27,7 +37,19 @@ buttonlabels = ["start", "instructions", "settings", "quit"]
 images = []
 for index, buttonlabel in enumerate(buttonlabels):
     images.append(tk.PhotoImage(file=getimagepath(buttonlabel + ".png")))
-    button = tk.Button(content, borderwidth=10, background="white", relief="groove", image=images[index], height=1, command=lambda: root.destroy(),)
+    button = tk.Button(content, borderwidth=10, background="white", relief="groove", image=images[index], command=lambda: root.destroy())
+ 
+    # checks each button label assigns an appropriate command
+    if buttonlabel == "start":
+        # configure the button to run the start function
+        button.config(command=lambda: start())
+    elif buttonlabel == "instructions":
+        # configure the button to run the instructions function
+        button.config(command=lambda: instructions())
+    elif buttonlabel == "settings":
+        # configure the button to run the settings function
+        button.config(command=lambda: settings())
+
     button.grid(column=2, row=index + 2, sticky = "nsew", padx=5, pady=5)
 
 # configuring all rows and columns for resizing
