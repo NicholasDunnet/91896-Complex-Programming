@@ -26,6 +26,8 @@ class GameWindow:
         windowwidth = random.randint(100, 500)
         windowheight = random.randint(100, 350)
 
+        self.root.attributes("-topmost", True)
+
         # Figures out where to place the window on the screen
         xpos = random.randint(0, screenwidth - windowwidth)
         ypos = random.randint(0, screenheight - windowheight)
@@ -52,11 +54,16 @@ class GameWindow:
 
     def click(self, event):
         if self.timeleft < 1:
-            self.root.destroy()
+            self.delete_self()
         else:
-            self.root.destroy()
+            self.delete_self()
             MainMenu.add_window(MainMenu)
             MainMenu.add_window(MainMenu)
+
+    def delete_self(self):
+        print(MainMenu.windowcount)
+        self.root.destroy()
+        MainMenu.windowcount -= 1
 
     # Creates a loop which will run every second for each window
     def loop(self):
@@ -80,7 +87,7 @@ class GameWindow:
             self.root.config(bg='black')
         # if the time left is less than 0 close the window
         else:
-            self.root.destroy()
+            self.delete_self()
             MainMenu.add_window(MainMenu)
             MainMenu.add_window(MainMenu)
         self.root.after(50, self.loop)
@@ -103,6 +110,8 @@ class MainMenu:
 
         content = tk.Frame(self.root, padx=12, pady=12, bg='#ff0000')
         content.grid(column=0, row=0, sticky = "nsew")
+        
+        MainMenu.windowcount = 0
 
         titleimage= tk.PhotoImage(file=getimagepath("title.png"))
         titlelabel = tk.Label(content, image=titleimage, bg='#ff0000')
@@ -159,6 +168,7 @@ class MainMenu:
         w = GameWindow()
         # Save this Window to the list of windows.
         MainMenu.windows.append(w)
+        self.windowcount += 1
 
     def del_windows(self):
         # Close all windows.
