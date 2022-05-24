@@ -46,6 +46,24 @@ class GameWindow:
     def loop(self):
         timeleft = round(float(self.label["text"]) - 0.1, 1)
         self.label["text"] = timeleft
+        # if the time left is greater than 5 set background to green
+        if timeleft > 5:
+            self.label.config(bg='green')
+            self.root.config(bg='green')
+        # if the time left is less than 5 set background to yellow
+        elif timeleft > 3:
+            self.label.config(bg='yellow')
+            self.root.config(bg='yellow')
+        # if the time left is less than 3 set background to red
+        elif timeleft > 0:
+            self.label.config(bg='red')
+            self.root.config(bg='red')
+        elif timeleft > -1:
+            self.label.config(bg='black', fg='white')
+            self.root.config(bg='black')
+        # if the time left is less than 0 close the window
+        else:
+            self.root.destroy()
         self.root.after(50, self.loop)
         
 class Instructions:
