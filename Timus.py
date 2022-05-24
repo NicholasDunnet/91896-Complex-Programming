@@ -3,7 +3,6 @@ import tkinter as tk
 import pathlib
 import os
 import random
-from turtle import position
 
 # creating global functions
 def getimagepath(filename):
@@ -37,12 +36,17 @@ class GameWindow:
         # Set window close action to close all windows
         self.root.protocol("WM_DELETE_WINDOW",lambda: MainMenu.del_windows(MainMenu))
 
-        # Allows the window to function with other windows and not be blocked
-        self.root.after(1000, self.loop)
+        self.label = tk.Label(self.root, text=str(random.randint(4, 16)), font=(None, 50))
+        self.label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
+        # Allows the window to function with other windows and not be blocked
+        self.loop()
+        
     # Creates a loop which will run every second for each window
     def loop(self):
-        self.root.after(1000, self.loop)
+        timeleft = round(float(self.label["text"]) - 0.1, 1)
+        self.label["text"] = timeleft
+        self.root.after(50, self.loop)
         
 class Instructions:
     def __init__(self):
