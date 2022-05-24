@@ -3,6 +3,7 @@ import tkinter as tk
 import pathlib
 import os
 import random
+import time
 
 # creating global functions
 def getimagepath(filename):
@@ -36,7 +37,12 @@ class GameWindow:
         # Set window close action to close all windows
         self.root.protocol("WM_DELETE_WINDOW",lambda: MainMenu.del_windows(MainMenu))
 
-        self.label = tk.Label(self.root, text=str(random.randint(4, 16)), font=(None, 50))
+        self.starttime = time.time()
+        self.runtime = random.randint(4, 16)
+        self.endtime = self.starttime + self.runtime
+        self.timeleft = self.endtime - time.time()
+
+        self.label = tk.Label(self.root, text=str(self.timeleft), font=(None, 50))
         self.label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
         # Allows the window to function with other windows and not be blocked
@@ -44,7 +50,8 @@ class GameWindow:
         
     # Creates a loop which will run every second for each window
     def loop(self):
-        timeleft = round(float(self.label["text"]) - 0.1, 1)
+        self.timeleft = self.endtime - time.time()
+        timeleft = round(self.timeleft, 1)
         self.label["text"] = timeleft
         # if the time left is greater than 5 set background to green
         if timeleft > 5:
@@ -55,10 +62,10 @@ class GameWindow:
             self.label.config(bg='yellow')
             self.root.config(bg='yellow')
         # if the time left is less than 3 set background to red
-        elif timeleft > 0:
+        elif timeleft > 1:
             self.label.config(bg='red')
             self.root.config(bg='red')
-        elif timeleft > -1:
+        elif timeleft > 0:
             self.label.config(bg='black', fg='white')
             self.root.config(bg='black')
         # if the time left is less than 0 close the window
