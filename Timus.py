@@ -37,6 +37,8 @@ class GameWindow:
         # Set window close action to close all windows
         self.root.protocol("WM_DELETE_WINDOW",lambda: MainMenu.del_windows(MainMenu))
 
+        self.root.bind('<Button-1>', self.click)
+
         self.starttime = time.time()
         self.runtime = random.randint(4, 16)
         self.endtime = self.starttime + self.runtime
@@ -47,7 +49,15 @@ class GameWindow:
 
         # Allows the window to function with other windows and not be blocked
         self.loop()
-        
+
+    def click(self, event):
+        if self.timeleft < 1:
+            self.root.destroy()
+        else:
+            self.root.destroy()
+            MainMenu.add_window(MainMenu)
+            MainMenu.add_window(MainMenu)
+
     # Creates a loop which will run every second for each window
     def loop(self):
         self.timeleft = self.endtime - time.time()
@@ -71,6 +81,8 @@ class GameWindow:
         # if the time left is less than 0 close the window
         else:
             self.root.destroy()
+            MainMenu.add_window(MainMenu)
+            MainMenu.add_window(MainMenu)
         self.root.after(50, self.loop)
         
 class Instructions:
@@ -132,7 +144,7 @@ class MainMenu:
 
     def start(self):
         self.add_window()
-        # self.root.destroy()
+        self.root.destroy()
 
     def instructions(self):
         self.instructions = Instructions()
