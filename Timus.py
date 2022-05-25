@@ -22,6 +22,7 @@ def getfilepath(filename):
 
 # Creating global variables
 seeninstructions = False # This variable is used to check if the instructions have been seen since the program has run
+maxwindows = 20 # This variable is used to set the maximum number of windows that can be opened at once
 
 # Creating the Game window class 
 class GameWindow:
@@ -279,12 +280,15 @@ class MainMenu:
 
     # Creates a function which will run when a window is to be added
     def add_window(self):
-        # Create a new window by creating a new window instance
-        window = GameWindow()
-        # Save this Window to the list of windows
-        MainMenu.windows.append(window)
-        # Increase the amount of windows open by 1
-        MainMenu.windowcount += 1
+        if MainMenu.windowcount < maxwindows:
+            # Create a new window by creating a new window instance
+            window = GameWindow()
+            # Save this Window to the list of windows
+            MainMenu.windows.append(window)
+            # Increase the amount of windows open by 1
+            MainMenu.windowcount += 1
+        else:
+            pass
 
     # Creates a function which will run when all windows are to be deleted
     def del_windows(self):
