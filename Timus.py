@@ -120,9 +120,11 @@ class GameWindow:
 class Instructions:
     """This class is used to create the instructions window
     """
-    def __init__(self):
+    def __init__(self, afteraction):
         global seeninstructions
         
+        self.action = afteraction
+
         # Create window
         self.root = tk.Tk()
         self.root.title("TIMUS")
@@ -147,9 +149,13 @@ class Instructions:
         instructionsblurblabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=instructionsblurbimage)
         instructionsblurblabel.grid(row=1, column=2, sticky = "nsew", padx=5, pady=5)
 
-        # Creates a button which will return to the main menu window
+        # Creates a button which will return to the main menu window or start the game depending if the user has read the instructions 
         doneimage = tk.PhotoImage(file=getfilepath("done.png"))
-        backbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=doneimage, command=lambda: self.return_to_main_menu(self))
+        backbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=doneimage)
+        if self.action == "start":
+            backbutton.config(command=lambda: self.start_game(self))
+        elif self.action == "mainmenu":
+            backbutton.config(command=lambda: self.return_to_main_menu(self))
         backbutton.grid(row=2, column=2, sticky = "nsew", padx=5, pady=5)
 
         # Set window close action to return to main menu rather than close the program
@@ -168,10 +174,14 @@ class Instructions:
 
         self.root.mainloop()
     
-    # Creates a function which is to be run when the user clicks the back button
+    # Creates a function which is to be run when the user clicks the back button from clicking on the instructions
     def return_to_main_menu(self, event):
         self.root.destroy()
         application = MainMenu()
+    
+    def start_game(self, event):
+        self.root.destroy()
+        MainMenu.add_window(MainMenu)
 
 # Creating the Settings window class  
 class Settings:
@@ -222,7 +232,7 @@ class MainMenu:
             if buttonlabel == "start": # If the button is the start button, set the command to run the start() function
                 button.config(command=lambda: self.start())
             elif buttonlabel == "instructions":# If the button is the instructions button, set the command to run the instructions() function
-                button.config(command=lambda: self.instructions())
+                button.config(command=lambda: self.instructions("mainmenu"))
             elif buttonlabel == "settings": # If the button is the settings button, set the command to run the settings() function
                 button.config(command=lambda: self.settings())
             elif buttonlabel == "quit": # If the button is the quit button, set the command to close the main menu
@@ -254,12 +264,13 @@ class MainMenu:
             self.root.destroy()
             self.add_window()
         elif seeninstructions == False:
-            self.instructions()
+            # start the instructions window and after reading the instructions start the game
+            self.instructions("start")
 
     # Creates a function which will run when the instructions button is clicked
-    def instructions(self):
+    def instructions(self, afteraction):
         self.root.destroy()
-        self.instructions = Instructions()
+        self.instructions = Instructions(afteraction)
 
     # Creates a function which will run when the start button is clicked
     def settings(self):
