@@ -20,6 +20,9 @@ def getfilepath(filename):
     img_path = os.path.join(current_dir, filename) # Joins this filepath with the filename
     return img_path # Returns the complete filepath
 
+# Creating global variables
+seeninstructions = False # This variable is used to check if the instructions have been seen since the program has run
+
 # Creating the Game window class 
 class GameWindow:
     """This class is used to create each game window
@@ -118,6 +121,8 @@ class Instructions:
     """This class is used to create the instructions window
     """
     def __init__(self):
+        global seeninstructions
+        
         # Create window
         self.root = tk.Tk()
         self.root.title("TIMUS")
@@ -146,6 +151,12 @@ class Instructions:
         doneimage = tk.PhotoImage(file=getfilepath("done.png"))
         backbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=doneimage, command=lambda: self.return_to_main_menu(self))
         backbutton.grid(row=2, column=2, sticky = "nsew", padx=5, pady=5)
+
+        # Set window close action to return to main menu rather than close the program
+        self.root.protocol("WM_DELETE_WINDOW",lambda: self.return_to_main_menu(self))
+
+        # Sets the seeninstructions variable to true
+        seeninstructions = True
 
         # Configure all columns and rows within the instructions window to expand to fill the window if resized
         self.root.columnconfigure(0, weight=1)
@@ -239,8 +250,11 @@ class MainMenu:
     
     # Creates a function which will run when the start button is clicked
     def start(self):
-        self.root.destroy()
-        self.add_window()
+        if seeninstructions == True:
+            self.root.destroy()
+            self.add_window()
+        elif seeninstructions == False:
+            self.instructions()
 
     # Creates a function which will run when the instructions button is clicked
     def instructions(self):
