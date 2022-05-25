@@ -100,6 +100,9 @@ class GameWindow:
     def click(self, event):
         if self.timeleft < 1: # If the time left is less that 1, run the delete_self() function
             self.delete_self()
+            if MainMenu.windowcount == 0: # If there are no windows left open, return to the main menu
+                application = MainMenu()
+
         else: # If the user clicks when the timer is not < 1 second, run the delete_self() function and open 2 more windows
             self.delete_self()
             MainMenu.add_window(MainMenu)
@@ -214,7 +217,7 @@ class MainMenu:
         # Save this Window to the list of windows
         MainMenu.windows.append(window)
         # Increase the amount of windows open by 1
-        self.windowcount += 1
+        MainMenu.windowcount += 1
 
     # Creates a function which will run when all windows are to be deleted
     def del_windows(self):
