@@ -63,7 +63,7 @@ class GameWindow:
         self.timeleft = self.endtime - time.time()
 
         # Creates and places a label which will display the amount of time left
-        self.label = tk.Label(self.root, text=str(self.timeleft), font=(None, 50))
+        self.label = tk.Label(self.root, text=str(self.timeleft), font=("Trebuchet MS", 50))
         self.label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
         # Begins by ruuning the loop() fuinction immediately
@@ -101,8 +101,8 @@ class GameWindow:
         if self.timeleft < 1: # If the time left is less that 1, run the delete_self() function
             self.delete_self()
             if MainMenu.windowcount == 0: # If there are no windows left open, return to the main menu
+                MainMenu.del_windows(MainMenu)
                 application = MainMenu()
-
         else: # If the user clicks when the timer is not < 1 second, run the delete_self() function and open 2 more windows
             self.delete_self()
             MainMenu.add_window(MainMenu)
@@ -118,7 +118,49 @@ class Instructions:
     """This class is used to create the instructions window
     """
     def __init__(self):
-        print("SettingsGUI")
+        # Create window
+        self.root = tk.Tk()
+        self.root.title("TIMUS")
+
+        # Sets the size of the window to 600 by 400 pixels
+        self.root.geometry("600x400")
+        
+        # Sets the minimum size that the main menu window can be resized to as 300 by 400 pixels
+        self.root.minsize(600, 400)
+
+        # Creates a frame within the window and grids it
+        content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
+        content.grid(column=0, row=0, sticky = "nsew")
+        
+        # Recieves the title image from the assets folder and places in on the window
+        titleimage= tk.PhotoImage(file=getfilepath("instructionstitle.png"))
+        titlelabel = tk.Label(content, image=titleimage, bg="#ff0000", padx=5, pady=5)
+        titlelabel.grid(row=0, column=0, columnspan=5, sticky = "nsew", padx=5, pady=5)
+
+        # Creates a label which will display the instructions
+        instructionsblurbimage= tk.PhotoImage(file=getfilepath("instructionsblurb.png"))
+        instructionsblurblabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=instructionsblurbimage)
+        instructionsblurblabel.grid(row=1, column=2, sticky = "nsew", padx=5, pady=5)
+
+        # Creates a button which will return to the main menu window
+        doneimage = tk.PhotoImage(file=getfilepath("done.png"))
+        backbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=doneimage, command=lambda: self.return_to_main_menu(self))
+        backbutton.grid(row=2, column=2, sticky = "nsew", padx=5, pady=5)
+
+        # Configure all columns and rows within the instructions window to expand to fill the window if resized
+        self.root.columnconfigure(0, weight=1)
+        self.root.rowconfigure(0, weight=1)
+        for i in range (0, 5):
+            content.columnconfigure(i, weight=1)
+        for i in range (0, 3):
+            content.rowconfigure(i, weight=1)
+
+        self.root.mainloop()
+    
+    # Creates a function which is to be run when the user clicks the back button
+    def return_to_main_menu(self, event):
+        self.root.destroy()
+        application = MainMenu()
 
 # Creating the Settings window class  
 class Settings:
@@ -197,18 +239,18 @@ class MainMenu:
     
     # Creates a function which will run when the start button is clicked
     def start(self):
-        self.add_window()
         self.root.destroy()
+        self.add_window()
 
     # Creates a function which will run when the instructions button is clicked
     def instructions(self):
-        self.instructions = Instructions()
         self.root.destroy()
+        self.instructions = Instructions()
 
     # Creates a function which will run when the start button is clicked
     def settings(self):
-        self.settings = Settings()
         self.root.destroy()
+        self.settings = Settings()
 
     # Creates a function which will run when a window is to be added
     def add_window(self):
