@@ -23,6 +23,7 @@ def getfilepath(filename):
 # Creating global variables
 seeninstructions = False # This variable is used to check if the instructions have been seen since the program has run
 maxwindows = 20 # This variable is used to set the maximum number of windows that can be opened at once
+highscore = 0 # This variable is used to store the highscore
 
 # Creating the Game window class 
 class GameWindow:
@@ -102,11 +103,16 @@ class GameWindow:
 
     # Creates a function which will run every time the user clicks within the window
     def click(self, event):
+        global highscore
         if self.timeleft < 1: # If the time left is less that 1, run the delete_self() function
             self.delete_self()
-            if MainMenu.windowcount == 0: # If there are no windows left open, return to the main menu
+            MainMenu.score+=10
+            if MainMenu.windowcount == 0: # If there are no windows left open, add score and return to the main menu 
+                if MainMenu.score > highscore:
+                    highscore = MainMenu.score
                 MainMenu.del_windows(MainMenu)
                 application = MainMenu()
+                
         else: # If the user clicks when the timer is not < 1 second, run the delete_self() function and open 2 more windows
             self.delete_self()
             MainMenu.add_window(MainMenu)
@@ -215,6 +221,11 @@ class MainMenu:
         titlelabel = tk.Label(content, image=titleimage, bg="#ff0000")
         titlelabel.grid(row=0, column=0, rowspan=2, columnspan=5, sticky = "nsew")
 
+        # Creates a label underneath the title which will display the user's high score
+        scoretext = "High Score: " + str(highscore)
+        scorelabel = tk.Label(content, borderwidth=10, background="white", relief="groove", text=scoretext, font=("Trebuchet MS bold", 12))
+        scorelabel.grid(row=2, column=2, sticky = "nsew", padx=5, pady=5)
+
         # Creates a list of buttons which are to be created
         buttonlabels = ["start", "instructions", "settings", "quit"]
         
@@ -240,7 +251,7 @@ class MainMenu:
                 button.config(command=lambda: self.root.destroy())
 
             # Place the button in descending order in the main menu window
-            button.grid(column=2, row=index + 2, sticky = "nsew", padx=5, pady=5)
+            button.grid(column=2, row=index + 3, sticky = "nsew", padx=5, pady=5)
 
         # Configure all columns and rows within the main menu window to expand to fill the window if resized
         self.root.columnconfigure(0, weight=1)
@@ -261,6 +272,7 @@ class MainMenu:
     
     # Creates a function which will run when the start button is clicked
     def start(self):
+        MainMenu.score = 0
         if seeninstructions == True:
             self.root.destroy()
             self.add_window()
@@ -288,7 +300,7 @@ class MainMenu:
             # Increase the amount of windows open by 1
             MainMenu.windowcount += 1
         else:
-            pass
+            MainMenu.score-=10
 
     # Creates a function which will run when all windows are to be deleted
     def del_windows(self):
