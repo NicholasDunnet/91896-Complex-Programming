@@ -139,7 +139,7 @@ class Instructions:
         # Sets the size of the window to 600 by 400 pixels
         self.root.geometry("600x400")
         
-        # Sets the minimum size that the main menu window can be resized to as 300 by 400 pixels
+        # Sets the minimum size that the main menu window can be resized to as 600 by 400 pixels
         self.root.minsize(600, 400)
 
         # Creates a frame within the window and grids it
@@ -195,7 +195,69 @@ class Settings:
     """This class is used to create the Settings window
     """
     def __init__(self):
-        print("SettingsGUI")
+        global seeninstructions
+
+        # Create window
+        self.root = tk.Tk()
+        self.root.title("TIMUS")
+
+        # Sets the size of the window to 600 by 400 pixels
+        self.root.geometry("600x400")
+        
+        # Sets the minimum size that the settings window can be resized to as 600 by 400 pixels
+        self.root.minsize(600, 400)
+
+        # Creates a frame within the window and grids it
+        content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
+        content.grid(column=0, row=0, sticky = "nsew")
+        
+        # Recieves the title image from the assets folder and places in on the window
+        titleimage= tk.PhotoImage(file=getfilepath("settingstitle.png"))
+        titlelabel = tk.Label(content, image=titleimage, bg="#ff0000", padx=5, pady=5)
+        titlelabel.grid(row=0, column=0, columnspan=5, sticky = "nsew", padx=5, pady=5)
+
+        # Creates a label which will display the first settings option
+        maxopenwindowsimage= tk.PhotoImage(file=getfilepath("maxopenwindows.png"))
+        maxopenwindowslabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=maxopenwindowsimage)
+        maxopenwindowslabel.grid(row=1, column=0, columnspan=3, sticky = "nsew", padx=5, pady=5)
+
+        # Creates a label which will display the second settings option
+        createduponmistakeimage= tk.PhotoImage(file=getfilepath("createduponmistake.png"))
+        createduponmistakelabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=createduponmistakeimage)
+        createduponmistakelabel.grid(row=2, column=0, columnspan=3, sticky = "nsew", padx=5, pady=5)
+
+        # Creates a label which will display the third settings option
+        maxtimerimage= tk.PhotoImage(file=getfilepath("maxtimer.png"))
+        maxtimerlabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=maxtimerimage)
+        maxtimerlabel.grid(row=3, column=0, columnspan=3, sticky = "nsew", padx=5, pady=5)
+
+        # Creates a button which will reset all settings to default
+        settodefaultimage= tk.PhotoImage(file=getfilepath("settodefault.png"))
+        settodefaultbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=settodefaultimage, command=lambda: self.return_to_main_menu(self))
+        settodefaultbutton.grid(row=4, column=0, columnspan=5, sticky = "nsew", padx=5, pady=5)
+
+        # Creates a button which will return to the main menu window 
+        doneimage = tk.PhotoImage(file=getfilepath("done.png"))
+        backbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=doneimage, command=lambda: self.return_to_main_menu(self))
+        backbutton.grid(row=5, column=0, columnspan=5, sticky = "nsew", padx=5, pady=5)
+
+        # Set window close action to return to main menu rather than close the program
+        self.root.protocol("WM_DELETE_WINDOW",lambda: self.return_to_main_menu(self))
+
+        # Configure all columns and rows within the instructions window to expand to fill the window if resized
+        self.root.columnconfigure(0, weight=1)
+        self.root.rowconfigure(0, weight=1)
+        for i in range (0, 5):
+            content.columnconfigure(i, weight=1)
+        for i in range (0, 7):
+            content.rowconfigure(i, weight=1)
+
+        self.root.mainloop()
+    
+    # Creates a function which is to be run when the user clicks the back button from clicking on the instructions
+    def return_to_main_menu(self, event):
+        self.root.destroy()
+        application = MainMenu()
 
 # Creating the Main Menu class
 class MainMenu:
