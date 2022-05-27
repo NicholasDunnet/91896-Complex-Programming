@@ -222,7 +222,8 @@ class Settings:
         maxopenwindowslabel.grid(row=1, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
 
         # Creates a spinbox which will allow the user to select the maximum amount of windows that can be open at once
-        maxopenwindowsspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove",) 
+        maxopenwindowsspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key")
+        maxopenwindowsspinbox["validatecommand"] = (maxopenwindowsspinbox.register(self.testVal),"%P","%d")
         maxopenwindowsspinbox.grid(row=1, column=3, sticky = "nsew", padx=5, pady=5)
 
         # Creates a label which will display the second settings option
@@ -266,6 +267,12 @@ class Settings:
 
         self.root.mainloop()
     
+    def testVal(self, characteradded, action):
+        if action == "1": # If the action is insert character
+            if not characteradded.isdigit(): # If the character is not a digit
+                return False # Return false and allow character to be typed
+        return True # Return true and allow character to be typed
+
     # Creates a function which is to be run when the user clicks the back button from clicking on the instructions
     def return_to_main_menu(self, event):
         self.root.destroy()
@@ -295,7 +302,7 @@ class MainMenu:
         titlelabel = tk.Label(content, image=titleimage, bg="#ff0000")
         titlelabel.grid(row=0, column=0, rowspan=2, columnspan=5, sticky = "nsew")
 
-        # Creates a label underneath the title which will display the user's high score
+        # Creates a label underneath the title which will display the user"s high score
         scoretext = "High Score: " + str(highscore)
         scorelabel = tk.Label(content, borderwidth=10, background="white", relief="groove", text=scoretext, font=("Trebuchet MS bold", 12))
         scorelabel.grid(row=2, column=2, sticky = "nsew", padx=5, pady=5)
