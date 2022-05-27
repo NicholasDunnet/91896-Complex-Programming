@@ -214,32 +214,44 @@ class Settings:
         # Recieves the title image from the assets folder and places in on the window
         titleimage= tk.PhotoImage(file=getfilepath("settingstitle.png"))
         titlelabel = tk.Label(content, image=titleimage, bg="#ff0000", padx=5, pady=5)
-        titlelabel.grid(row=0, column=0, columnspan=5, sticky = "nsew", padx=5, pady=5)
+        titlelabel.grid(row=0, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
 
         # Creates a label which will display the first settings option
         maxopenwindowsimage= tk.PhotoImage(file=getfilepath("maxopenwindows.png"))
         maxopenwindowslabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=maxopenwindowsimage)
-        maxopenwindowslabel.grid(row=1, column=0, columnspan=3, sticky = "nsew", padx=5, pady=5)
+        maxopenwindowslabel.grid(row=1, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
+
+        # Creates a spinbox which will allow the user to select the maximum amount of windows that can be open at once
+        maxopenwindowsspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove",) 
+        maxopenwindowsspinbox.grid(row=1, column=3, sticky = "nsew", padx=5, pady=5)
 
         # Creates a label which will display the second settings option
         createduponmistakeimage= tk.PhotoImage(file=getfilepath("createduponmistake.png"))
         createduponmistakelabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=createduponmistakeimage)
-        createduponmistakelabel.grid(row=2, column=0, columnspan=3, sticky = "nsew", padx=5, pady=5)
+        createduponmistakelabel.grid(row=2, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
+
+        # Creates a spinbox which will allow the user to select amount of windows which are created upon a mistake
+        createduponmistakespinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove",) 
+        createduponmistakespinbox.grid(row=2, column=3, sticky = "nsew", padx=5, pady=5)
 
         # Creates a label which will display the third settings option
         maxtimerimage= tk.PhotoImage(file=getfilepath("maxtimer.png"))
         maxtimerlabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=maxtimerimage)
-        maxtimerlabel.grid(row=3, column=0, columnspan=3, sticky = "nsew", padx=5, pady=5)
+        maxtimerlabel.grid(row=3, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
+
+        # Creates a spinbox which will allow the user to select the maximum amount of time a timer can start on
+        maxtimerspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove",) 
+        maxtimerspinbox.grid(row=3, column=3, sticky = "nsew", padx=5, pady=5)
 
         # Creates a button which will reset all settings to default
         settodefaultimage= tk.PhotoImage(file=getfilepath("settodefault.png"))
         settodefaultbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=settodefaultimage, command=lambda: self.return_to_main_menu(self))
-        settodefaultbutton.grid(row=4, column=0, columnspan=5, sticky = "nsew", padx=5, pady=5)
+        settodefaultbutton.grid(row=4, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
 
         # Creates a button which will return to the main menu window 
         doneimage = tk.PhotoImage(file=getfilepath("done.png"))
         backbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=doneimage, command=lambda: self.return_to_main_menu(self))
-        backbutton.grid(row=5, column=0, columnspan=5, sticky = "nsew", padx=5, pady=5)
+        backbutton.grid(row=5, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
 
         # Set window close action to return to main menu rather than close the program
         self.root.protocol("WM_DELETE_WINDOW",lambda: self.return_to_main_menu(self))
@@ -247,7 +259,7 @@ class Settings:
         # Configure all columns and rows within the instructions window to expand to fill the window if resized
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
-        for i in range (0, 5):
+        for i in range (0, 4):
             content.columnconfigure(i, weight=1)
         for i in range (0, 7):
             content.rowconfigure(i, weight=1)
