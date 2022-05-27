@@ -22,8 +22,10 @@ def getfilepath(filename):
 
 # Creating global variables
 seeninstructions = False # This variable is used to check if the instructions have been seen since the program has run
-maxwindows = 20 # This variable is used to set the maximum number of windows that can be opened at once
 highscore = 0 # This variable is used to store the highscore
+maxwindows = 20 # This variable is used to set the maximum number of windows that can be opened at once
+windowscreateduponmistake = 2 # This variable is used to set the number of windows that are created when the user makes a mistake
+maxwindowtimer = 15 # This variable is used to set the maximum time that a window can be open for
 
 # Creating the Game window class 
 class GameWindow:
@@ -216,46 +218,44 @@ class Settings:
         titlelabel = tk.Label(content, image=titleimage, bg="#ff0000", padx=5, pady=5)
         titlelabel.grid(row=0, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
 
-        # Creates a label which will display the first settings option
-        maxopenwindowsimage= tk.PhotoImage(file=getfilepath("maxopenwindows.png"))
-        maxopenwindowslabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=maxopenwindowsimage)
-        maxopenwindowslabel.grid(row=1, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
+        # Creates a list of settings which are to be created
+        settinglabels = ["maxopenwindows", "createduponmistake", "maxtimer"]
+        
+        # Creates a list of images and spinboxes are to be used for the settings
+        images = []
+        self.spinboxes = []
 
-        # Creates a spinbox which will allow the user to select the maximum amount of windows that can be open at once
-        maxopenwindowsspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key")
-        maxopenwindowsspinbox["validatecommand"] = (maxopenwindowsspinbox.register(self.testVal),"%P","%d")
-        maxopenwindowsspinbox.grid(row=1, column=3, sticky = "nsew", padx=5, pady=5)
+        # For each button in the list of buttons, do the following
+        for index, settinglabels in enumerate(settinglabels):
+            # Add the appropriate image to the list of images so that the image is stored in memory
+            images.append(tk.PhotoImage(file=getfilepath(settinglabels + ".png")))
+            
+            settinglabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=images[index])
+            settinglabel.grid(row=index+1, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
+            settingsspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key", value=78)
+            if index == 0:
+                settingsspinbox.config(value=maxwindows)
+            elif index == 1:
+                settingsspinbox.config(value=windowscreateduponmistake)
+            elif index == 2:
+                settingsspinbox.config(value=maxwindowtimer)
 
-        # Creates a label which will display the second settings option
-        createduponmistakeimage= tk.PhotoImage(file=getfilepath("createduponmistake.png"))
-        createduponmistakelabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=createduponmistakeimage)
-        createduponmistakelabel.grid(row=2, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
-
-        # Creates a spinbox which will allow the user to select amount of windows which are created upon a mistake
-        createduponmistakespinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove",) 
-        createduponmistakespinbox.grid(row=2, column=3, sticky = "nsew", padx=5, pady=5)
-
-        # Creates a label which will display the third settings option
-        maxtimerimage= tk.PhotoImage(file=getfilepath("maxtimer.png"))
-        maxtimerlabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=maxtimerimage)
-        maxtimerlabel.grid(row=3, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
-
-        # Creates a spinbox which will allow the user to select the maximum amount of time a timer can start on
-        maxtimerspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove",) 
-        maxtimerspinbox.grid(row=3, column=3, sticky = "nsew", padx=5, pady=5)
+            settingsspinbox["validatecommand"] = (settingsspinbox.register(self.testVal),"%P","%d")
+            self.spinboxes.append(settingsspinbox)
+            settingsspinbox.grid(row=index+1, column=3, sticky = "nsew", padx=5, pady=5)
 
         # Creates a button which will reset all settings to default
         settodefaultimage= tk.PhotoImage(file=getfilepath("settodefault.png"))
-        settodefaultbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=settodefaultimage, command=lambda: self.return_to_main_menu(self))
+        settodefaultbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=settodefaultimage, command=lambda: self.reset_to_default())
         settodefaultbutton.grid(row=4, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
 
         # Creates a button which will return to the main menu window 
         doneimage = tk.PhotoImage(file=getfilepath("done.png"))
-        backbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=doneimage, command=lambda: self.return_to_main_menu(self))
+        backbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=doneimage, command=lambda: self.return_to_main_menu())
         backbutton.grid(row=5, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
 
         # Set window close action to return to main menu rather than close the program
-        self.root.protocol("WM_DELETE_WINDOW",lambda: self.return_to_main_menu(self))
+        self.root.protocol("WM_DELETE_WINDOW",lambda: self.return_to_main_menu())
 
         # Configure all columns and rows within the instructions window to expand to fill the window if resized
         self.root.columnconfigure(0, weight=1)
@@ -273,8 +273,25 @@ class Settings:
                 return False # Return false and allow character to be typed
         return True # Return true and allow character to be typed
 
+    def reset_to_default(self):
+        global maxwindows
+        global windowscreateduponmistake
+        global maxwindowtimer
+
+        maxwindows = 20
+        windowscreateduponmistake = 2
+        maxwindowtimer = 15
+        self.root.destroy()
+        application.settings = Settings()
+
     # Creates a function which is to be run when the user clicks the back button from clicking on the instructions
-    def return_to_main_menu(self, event):
+    def return_to_main_menu(self):
+        global maxwindows
+        global windowscreateduponmistake
+        global maxwindowtimer
+        maxwindows = self.spinboxes[0].get()
+        windowscreateduponmistake = self.spinboxes[1].get()
+        maxwindowtimer = self.spinboxes[2].get()
         self.root.destroy()
         application = MainMenu()
 
