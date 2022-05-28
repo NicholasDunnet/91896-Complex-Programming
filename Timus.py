@@ -22,6 +22,7 @@ def getfilepath(filename):
 
 # Creating global variables
 seeninstructions = False # This variable is used to check if the instructions have been seen since the program has run
+
 highscore = 0 # This variable is used to store the highscore
 maxwindows = 20 # This variable is used to set the maximum number of windows that can be opened at once
 windowscreateduponmistake = 2 # This variable is used to set the number of windows that are created when the user makes a mistake
@@ -312,6 +313,8 @@ class MainMenu:
         
         # Sets the minimum size that the main menu window can be resized to as 300 by 400 pixels
         self.root.minsize(300, 400)
+
+        self.root.eval('tk::PlaceWindow . center')
 
         # Creates a frame within the window and grids it
         content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
