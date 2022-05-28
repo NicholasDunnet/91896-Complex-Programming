@@ -20,6 +20,36 @@ def getfilepath(filename):
     img_path = os.path.join(current_dir, filename) # Joins this filepath with the filename
     return img_path # Returns the complete filepath
 
+def center(window):
+    """This function centers the given window on the users screen
+
+    Args:
+        win (object): the window
+    """
+    
+    # Updates the imformation of the window
+    window.update_idletasks()
+    
+    # Gets the actual width of the window (frame included)
+    width = window.winfo_width()
+    frm_width = window.winfo_rootx() - window.winfo_x()
+    win_width = width + 2 * frm_width
+    
+    # Gets the actual height of the window (titlebar included)
+    height = window.winfo_height()
+    titlebar_height = window.winfo_rooty() - window.winfo_y()
+    win_height = height + titlebar_height + frm_width
+    
+    # Creates the x and y values of the window
+    x = window.winfo_screenwidth() // 2 - win_width // 2
+    y = window.winfo_screenheight() // 2 - win_height // 2
+
+    # Places the window using these x and y values
+    window.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+    
+    # Stops the window flashing in the wrong location before being moved to center
+    window.deiconify()
+
 # Creating global variables
 seeninstructions = False # This variable is used to check if the instructions have been seen since the program has run
 
@@ -145,6 +175,9 @@ class Instructions:
         # Sets the minimum size that the main menu window can be resized to as 600 by 400 pixels
         self.root.minsize(600, 400)
 
+        # Centers the window
+        center(self.root)
+
         # Creates a frame within the window and grids it
         content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
         content.grid(column=0, row=0, sticky = "nsew")
@@ -207,6 +240,9 @@ class Settings:
         
         # Sets the minimum size that the settings window can be resized to as 600 by 400 pixels
         self.root.minsize(600, 400)
+
+        # Centers the window
+        center(self.root)
 
         # Creates a frame within the window and grids it
         content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
@@ -314,7 +350,8 @@ class MainMenu:
         # Sets the minimum size that the main menu window can be resized to as 300 by 400 pixels
         self.root.minsize(300, 400)
 
-        self.root.eval('tk::PlaceWindow . center')
+        # Centers the window
+        center(self.root)
 
         # Creates a frame within the window and grids it
         content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
