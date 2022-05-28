@@ -65,7 +65,7 @@ class GameWindow:
 
         # Determines the amount of time to click on the window (random betwwen 4 and 16 seconds)
         self.starttime = time.time()
-        self.runtime = random.randint(4, 16)
+        self.runtime = random.randint(4, maxwindowtimer)
         self.endtime = self.starttime + self.runtime
         self.timeleft = self.endtime - time.time()
 
@@ -97,8 +97,8 @@ class GameWindow:
             self.root.config(bg="black")
         else: # If the time left is less than 0 (if the user does not click on the window in time), run the delete_self() function and open two more game windows
             self.delete_self()
-            MainMenu.add_window(MainMenu)
-            MainMenu.add_window(MainMenu)
+            for i in range (windowscreateduponmistake):
+                MainMenu.add_window(MainMenu)
         
         # Runs the loop() function again after 100ms
         self.root.after(100, self.loop)
@@ -117,8 +117,8 @@ class GameWindow:
                 
         else: # If the user clicks when the timer is not < 1 second, run the delete_self() function and open 2 more windows
             self.delete_self()
-            MainMenu.add_window(MainMenu)
-            MainMenu.add_window(MainMenu)
+            for i in range (windowscreateduponmistake):
+                MainMenu.add_window(MainMenu)
 
     # Create a function which will run when the window is to be deleted
     def delete_self(self):
@@ -197,8 +197,6 @@ class Settings:
     """This class is used to create the Settings window
     """
     def __init__(self):
-        global seeninstructions
-
         # Create window
         self.root = tk.Tk()
         self.root.title("TIMUS")
@@ -232,7 +230,7 @@ class Settings:
             
             settinglabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=images[index])
             settinglabel.grid(row=index+1, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
-            settingsspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key", value=78)
+            settingsspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key")
             if index == 0:
                 settingsspinbox.config(value=maxwindows)
             elif index == 1:
@@ -289,9 +287,9 @@ class Settings:
         global maxwindows
         global windowscreateduponmistake
         global maxwindowtimer
-        maxwindows = self.spinboxes[0].get()
-        windowscreateduponmistake = self.spinboxes[1].get()
-        maxwindowtimer = self.spinboxes[2].get()
+        maxwindows = int(self.spinboxes[0].get())
+        windowscreateduponmistake = int(self.spinboxes[1].get())
+        maxwindowtimer = int(self.spinboxes[2].get())
         self.root.destroy()
         application = MainMenu()
 
