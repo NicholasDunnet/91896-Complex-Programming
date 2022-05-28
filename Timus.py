@@ -231,12 +231,17 @@ class Settings:
             settinglabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=images[index])
             settinglabel.grid(row=index+1, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
             settingsspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key")
+
+            settingvalue = tk.IntVar()
+
             if index == 0:
-                settingsspinbox.config(value=maxwindows)
+                settingvalue.set(maxwindows)
             elif index == 1:
-                settingsspinbox.config(value=windowscreateduponmistake)
+                settingvalue.set(windowscreateduponmistake)
             elif index == 2:
-                settingsspinbox.config(value=maxwindowtimer)
+                settingvalue.set(maxwindowtimer)
+            
+            settingsspinbox.config(textvariable=settingvalue)
 
             settingsspinbox["validatecommand"] = (settingsspinbox.register(self.testVal),"%P","%d")
             self.spinboxes.append(settingsspinbox)
