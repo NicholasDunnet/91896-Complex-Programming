@@ -271,18 +271,20 @@ class Settings:
 
             # Places the label
             settinglabel.grid(row=index+1, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
-            settingsspinbox = tk.Spinbox(content, from_=1, to=99999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key")
+            settingsspinbox = tk.Spinbox(content, from_=1, to=9999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key")
 
             # Creates a variable which will store the value of the current setting
             settingvalue = tk.IntVar()
 
             if index == 0: # If the current setting is the max open windows setting
                 settingvalue.set(maxwindows) # Set the value of the setting to the current max open windows setting
+                settingsspinbox.config(to=50) # Set the maximum value of the spinbox to 50
             elif index == 1: # If the current setting is the created upon mistake setting
                 settingvalue.set(windowscreateduponmistake) # Set the value of the setting to the current created upon mistake setting
+                settingsspinbox.config(to=10) # Set the maximum value of the spinbox to 50
             elif index == 2: # If the current setting is the max timer setting
                 settingvalue.set(maxwindowtimer) # Set the value of the setting to the current max timer setting
-                settingsspinbox.config(from_=4)
+                settingsspinbox.config(from_=4, to=9999) # Set the maximum value of the spinbox to 9999 and the minimum to 4
 
             # Configure the default value of the spinbox to the value (determined above)
             settingsspinbox.config(textvariable=settingvalue)
@@ -346,12 +348,12 @@ class Settings:
         global maxwindowtimer
 
         thingschanged = False # Creates a variable which will be used to determine if any settings have been changed due to restrictions
-        
+
         if int(self.spinboxes[0].get()) < 1: # If the max open windows setting is less than 1
             maxwindows = 1 # Set the max open windows setting to 1
             thingschanged = True # Set thingschanged to true
-        elif int(self.spinboxes[0].get()) > 99999: # If the max open windows setting is greater than 99999
-            maxwindows = 99999 # Set the max open windows setting to 99999
+        elif int(self.spinboxes[0].get()) > 50: # If the max open windows setting is greater than 50
+            maxwindows = 50 # Set the max open windows setting to 50
             thingschanged = True # Set thingschanged to true
         else:
             maxwindows = int(self.spinboxes[0].get())
@@ -359,8 +361,8 @@ class Settings:
         if int(self.spinboxes[1].get()) < 1: # If the created upon mistake setting is less than 1
             windowscreateduponmistake = 1 # Set the created upon mistake setting to 1
             thingschanged = True # Set thingschanged to true
-        elif int(self.spinboxes[1].get()) > 99999: # If the created upon mistake setting is greater than 99999
-            windowscreateduponmistake = 99999 # Set the created upon mistake setting to 99999
+        elif int(self.spinboxes[1].get()) > 10: # If the created upon mistake setting is greater than 10
+            windowscreateduponmistake = 10 # Set the created upon mistake setting to 10
             thingschanged = True # Set thingschanged to true
         else:
             windowscreateduponmistake = int(self.spinboxes[1].get()) 
@@ -368,8 +370,8 @@ class Settings:
         if int(self.spinboxes[2].get()) < 4: # If the max timer setting is less than 4
             maxwindowtimer = 4 # Set the max timer setting to 4
             thingschanged = True # Set thingschanged to true
-        if int(self.spinboxes[2].get()) > 99999: # If the max timer setting is greater than 99999
-            maxwindowtimer = 99999 # Set the max timer setting to 99999
+        if int(self.spinboxes[2].get()) > 9999: # If the max timer setting is greater than 99999
+            maxwindowtimer = 9999 # Set the max timer setting to 9999
             thingschanged = True # Set thingschanged to true
         else:
             maxwindowtimer = int(self.spinboxes[2].get())
