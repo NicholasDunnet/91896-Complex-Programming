@@ -4,6 +4,7 @@ import pathlib
 import os
 import random
 import time
+import math
 
 # Creating global functions
 def getfilepath(filename):
@@ -96,7 +97,7 @@ class GameWindow:
 
         # Determines the amount of time to click on the window (random betwwen 4 and 16 seconds)
         self.starttime = time.time()
-        self.runtime = random.randint(4, maxwindowtimer)
+        self.runtime = random.randint((math.ceil(maxwindowtimer/4)), maxwindowtimer)
         self.endtime = self.starttime + self.runtime
         self.timeleft = self.endtime - time.time()
 
@@ -265,23 +266,34 @@ class Settings:
             # Add the appropriate image to the list of images so that the image is stored in memory
             images.append(tk.PhotoImage(file=getfilepath(settinglabels + ".png")))
             
+            # Create a label for the setting
             settinglabel = tk.Label(content, borderwidth=10, background="white", relief="groove", image=images[index])
+
+            # Places the label
             settinglabel.grid(row=index+1, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
             settingsspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key")
 
+            # Creates a variable which will store the value of the current setting
             settingvalue = tk.IntVar()
 
-            if index == 0:
-                settingvalue.set(maxwindows)
-            elif index == 1:
-                settingvalue.set(windowscreateduponmistake)
-            elif index == 2:
-                settingvalue.set(maxwindowtimer)
-            
+            if index == 0: # If the current setting is the max open windows setting
+                settingvalue.set(maxwindows) # Set the value of the setting to the current max open windows setting
+            elif index == 1: # If the current setting is the created upon mistake setting
+                settingvalue.set(windowscreateduponmistake) # Set the value of the setting to the current created upon mistake setting
+            elif index == 2: # If the current setting is the max timer setting
+                settingvalue.set(maxwindowtimer) # Set the value of the setting to the current max timer setting
+                settingsspinbox.config(from_=4)
+
+            # Configure the default value of the spinbox to the value (determined above)
             settingsspinbox.config(textvariable=settingvalue)
 
+            # Sets the validate command to testVal (see below)
             settingsspinbox["validatecommand"] = (settingsspinbox.register(self.testVal),"%P","%d")
+            
+            # Adds the spinbox to the list of spinboxes
             self.spinboxes.append(settingsspinbox)
+            
+            # Places the spinbox in the window
             settingsspinbox.grid(row=index+1, column=3, sticky = "nsew", padx=5, pady=5)
 
         # Creates a button which will reset all settings to default
@@ -314,24 +326,31 @@ class Settings:
         return True # Return true and allow character to be typed
 
     def reset_to_default(self):
+        # Calls all global setting variables and resets them to defaut 
         global maxwindows
         global windowscreateduponmistake
         global maxwindowtimer
-
         maxwindows = 20
         windowscreateduponmistake = 2
         maxwindowtimer = 15
+        
+        # Closes and reopens the settings window
         self.root.destroy()
         application.settings = Settings()
 
     # Creates a function which is to be run when the user clicks the back button from clicking on the instructions
     def return_to_main_menu(self):
+        # Calls all global settings variables
         global maxwindows
         global windowscreateduponmistake
         global maxwindowtimer
+        
+        # Sets each of the global settings variables to the value of the spinbox
         maxwindows = int(self.spinboxes[0].get())
         windowscreateduponmistake = int(self.spinboxes[1].get())
         maxwindowtimer = int(self.spinboxes[2].get())
+
+        # Closes the settings window and opens the main menu window
         self.root.destroy()
         application = MainMenu()
 
