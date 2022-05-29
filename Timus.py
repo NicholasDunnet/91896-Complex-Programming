@@ -28,7 +28,7 @@ def center(window):
         win (object): the window
     """
     
-    # Updates the imformation of the window
+    # Updates the information of the window
     window.update_idletasks()
     
     # Gets the actual width of the window (frame included)
@@ -95,7 +95,7 @@ class GameWindow:
         # Binds a click on the window to the click() function
         self.root.bind("<Button-1>", self.click)
 
-        # Determines the amount of time to click on the window (random betwwen 4 and 16 seconds)
+        # Determines the amount of time to click on the window (random between 4 and 16 seconds)
         self.starttime = time.time()
         self.runtime = random.randint((math.ceil(maxwindowtimer/4)), maxwindowtimer)
         self.endtime = self.starttime + self.runtime
@@ -105,7 +105,7 @@ class GameWindow:
         self.label = tk.Label(self.root, text=str(self.timeleft), font=("Trebuchet MS", 50))
         self.label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
-        # Begins by ruuning the loop() fuinction immediately
+        # Begins by running the loop() function immediately
         self.loop()
 
     # Creates a loop function which will run every 100ms for this window
@@ -183,7 +183,7 @@ class Instructions:
         content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
         content.grid(column=0, row=0, sticky = "nsew")
         
-        # Recieves the title image from the assets folder and places in on the window
+        # Receives the title image from the assets folder and places in on the window
         titleimage= tk.PhotoImage(file=getfilepath("instructionstitle.png"))
         titlelabel = tk.Label(content, image=titleimage, bg="#ff0000", padx=5, pady=5)
         titlelabel.grid(row=0, column=0, columnspan=5, sticky = "nsew", padx=5, pady=5)
@@ -249,7 +249,7 @@ class Settings:
         content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
         content.grid(column=0, row=0, sticky = "nsew")
         
-        # Recieves the title image from the assets folder and places in on the window
+        # Receives the title image from the assets folder and places in on the window
         titleimage= tk.PhotoImage(file=getfilepath("settingstitle.png"))
         titlelabel = tk.Label(content, image=titleimage, bg="#ff0000", padx=5, pady=5)
         titlelabel.grid(row=0, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
@@ -271,7 +271,7 @@ class Settings:
 
             # Places the label
             settinglabel.grid(row=index+1, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
-            settingsspinbox = tk.Spinbox(content, from_=1, to=999999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key")
+            settingsspinbox = tk.Spinbox(content, from_=1, to=99999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key")
 
             # Creates a variable which will store the value of the current setting
             settingvalue = tk.IntVar()
@@ -326,7 +326,7 @@ class Settings:
         return True # Return true and allow character to be typed
 
     def reset_to_default(self):
-        # Calls all global setting variables and resets them to defaut 
+        # Calls all global setting variables and resets them to default 
         global maxwindows
         global windowscreateduponmistake
         global maxwindowtimer
@@ -344,15 +344,44 @@ class Settings:
         global maxwindows
         global windowscreateduponmistake
         global maxwindowtimer
-        
-        # Sets each of the global settings variables to the value of the spinbox
-        maxwindows = int(self.spinboxes[0].get())
-        windowscreateduponmistake = int(self.spinboxes[1].get())
-        maxwindowtimer = int(self.spinboxes[2].get())
 
-        # Closes the settings window and opens the main menu window
-        self.root.destroy()
-        application = MainMenu()
+        thingschanged = False # Creates a variable which will be used to determine if any settings have been changed due to restrictions
+        
+        if int(self.spinboxes[0].get()) < 1: # If the max open windows setting is less than 1
+            maxwindows = 1 # Set the max open windows setting to 1
+            thingschanged = True # Set thingschanged to true
+        elif int(self.spinboxes[0].get()) > 99999: # If the max open windows setting is greater than 99999
+            maxwindows = 99999 # Set the max open windows setting to 99999
+            thingschanged = True # Set thingschanged to true
+        else:
+            maxwindows = int(self.spinboxes[0].get())
+        
+        if int(self.spinboxes[1].get()) < 1: # If the created upon mistake setting is less than 1
+            windowscreateduponmistake = 1 # Set the created upon mistake setting to 1
+            thingschanged = True # Set thingschanged to true
+        elif int(self.spinboxes[1].get()) > 99999: # If the created upon mistake setting is greater than 99999
+            windowscreateduponmistake = 99999 # Set the created upon mistake setting to 99999
+            thingschanged = True # Set thingschanged to true
+        else:
+            windowscreateduponmistake = int(self.spinboxes[1].get()) 
+
+        if int(self.spinboxes[2].get()) < 4: # If the max timer setting is less than 4
+            maxwindowtimer = 4 # Set the max timer setting to 4
+            thingschanged = True # Set thingschanged to true
+        if int(self.spinboxes[2].get()) > 99999: # If the max timer setting is greater than 99999
+            maxwindowtimer = 99999 # Set the max timer setting to 99999
+            thingschanged = True # Set thingschanged to true
+        else:
+            maxwindowtimer = int(self.spinboxes[2].get())
+        
+        if not thingschanged: # If any no settings have been changed due to restrictions 
+            # Closes the settings window and opens the main menu window
+            self.root.destroy()
+            application = MainMenu()
+        else: # If any settings have been changed due to restrictions
+            # Closes the settings window and opens the settings window again
+            self.root.destroy()
+            application.settings = Settings()
 
 # Creating the Main Menu class
 class MainMenu:
@@ -376,7 +405,7 @@ class MainMenu:
         content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
         content.grid(column=0, row=0, sticky = "nsew")
         
-        # Recieves the title image from the assets folder and places in on the window
+        # Receives the title image from the assets folder and places in on the window
         titleimage= tk.PhotoImage(file=getfilepath("title.png"))
         titlelabel = tk.Label(content, image=titleimage, bg="#ff0000")
         titlelabel.grid(row=0, column=0, rowspan=2, columnspan=5, sticky = "nsew")
