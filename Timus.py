@@ -47,17 +47,33 @@ def center(window):
     # Stops the window flashing in the wrong location before being moved to center
     window.deiconify()
 
+def settings_to_default():
+    global settings
+    settings = {
+    "max_windows" : 
+        {"value" : 20,
+        "min" : 1,
+        "max" : 50}, 
+    "windows_created_upon_mistake" : 
+        {"value" : 2,
+        "min" : 1,
+        "max" : 10},  
+    "max_window_timer" : 
+        {"value" : 15,
+        "min" : 4,
+        "max" : 9999},  
+    "num_starting_windows" : 
+        {"value" : 1,
+        "min" : 1,
+        "max" : 20}}
 # Creating global variables
 seen_instructions_state = False # This variable is used to check if the instructions have been seen since the program has run
 
 highscore = 0 # This variable is used to store the highscore
 
-# This dictionary is used to store the settings and their corresponding values
-settings = {
-    "max_windows" : 20, # This setting is used to set the maximum number of windows that can be opened at once
-    "windows_created_upon_mistake" : 2, # This setting is used to set the number of windows that are created when the user makes a mistake
-    "max_window_timer" : 15, # This setting is used to set the maximum time that a window can be open for
-    "num_starting_windows" : 1} # This setting is used to set the number of windows that are created when the game starts initially
+# This dictionary is used to store the settings and their corresponding values, minimums and maximums
+settings = {}
+settings_to_default()
 
 # Creating the Game window class 
 class Game_Window:
@@ -97,7 +113,7 @@ class Game_Window:
 
         # Determines the amount of time to click on the window (random between 4 and 16 seconds)
         self.start_time = time.time()
-        self.run_time = random.randint((math.ceil(settings["max_window_timer"]/4)), settings["max_window_timer"])
+        self.run_time = random.randint((math.ceil(settings["max_window_timer"]["value"]/4)), settings["max_window_timer"]["value"])
         self.end_time = self.start_time + self.run_time
         self.time_left = self.end_time - time.time()
 
@@ -129,7 +145,7 @@ class Game_Window:
             self.root.config(bg="black")
         else: # If the time left is less than 0 (if the user does not click on the window in time), run the delete_self() function and open two more game windows
             self.delete_self()
-            for i in range (settings["windows_created_upon_mistake"]):
+            for i in range (settings["windows_created_upon_mistake"]["value"]):
                 Main_Menu.add_window(Main_Menu)
         
         # Runs the loop() function again after 100ms
@@ -149,7 +165,7 @@ class Game_Window:
                 
         else: # If the user clicks when the timer is not < 1 second, run the delete_self() function and open 2 more windows
             self.delete_self()
-            for i in range (settings["windows_created_upon_mistake"]):
+            for i in range (settings["windows_created_upon_mistake"]["value"]):
                 Main_Menu.add_window(Main_Menu)
 
     # Create a function which will run when the window is to be deleted
@@ -225,7 +241,7 @@ class Instructions:
     
     def start_game(self, event):
         self.root.destroy()
-        for i in range(0, settings["num_starting_windows"]):
+        for i in range(0, settings["num_starting_windows"]["value"]):
             Main_Menu.add_window(Main_Menu)
 
 # Creating the Settings window class  
@@ -254,43 +270,26 @@ class Settings:
         title_image= tk.PhotoImage(file=get_file_path("settingstitle.png"))
         title_label = tk.Label(content, image=title_image, bg="#ff0000", padx=5, pady=5)
         title_label.grid(row=0, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
-
-        # Creates a list of settings which are to be created
-        setting_labels = ["maxopenwindows", "createduponmistake", "maxtimer", "numstartingwindows"]
         
         # Creates a list of images and spinboxes are to be used for the settings
         images = []
         self.spinboxes = []
 
         # For each button in the list of buttons, do the following
-        for index, setting_labels in enumerate(setting_labels):
+        for index, setting in enumerate(settings.items()):
             # Add the appropriate image to the list of images so that the image is stored in memory
-            images.append(tk.PhotoImage(file=get_file_path(setting_labels + ".png")))
-            
+            images.append(tk.PhotoImage(file=get_file_path(setting[0] + ".png")))
+
             # Create a label for the setting
             setting_label = tk.Label(content, borderwidth=10, background="white", relief="groove", image=images[index])
 
             # Places the label
             setting_label.grid(row=index+1, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
-            setting_spinbox = tk.Spinbox(content, from_=1, to=9999, width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key")
+            setting_spinbox = tk.Spinbox(content, from_=setting[1]["min"], to=setting[1]["max"], width=3, wrap=True, font=("Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate= "key")
 
             # Creates a variable which will store the value of the current setting
             setting_value = tk.IntVar()
-
-            if index == 0: # If the current setting is the max open windows setting
-                setting_value.set(settings["max_windows"]) # Set the value of the setting to the current max open windows setting
-                setting_spinbox.config(to=50) # Set the maximum value of the spinbox to 50
-            elif index == 1: # If the current setting is the created upon mistake setting
-                setting_value.set(settings["windows_created_upon_mistake"]) # Set the value of the setting to the current created upon mistake setting
-                setting_spinbox.config(to=10) # Set the maximum value of the spinbox to 50
-            elif index == 2: # If the current setting is the max timer setting
-                setting_value.set(settings["max_window_timer"]) # Set the value of the setting to the current max timer setting
-                setting_spinbox.config(from_=4, to=9999) # Set the maximum value of the spinbox to 9999 and the minimum to 4
-            elif index == 3: # If the current setting is the max timer setting
-                setting_value.set(settings["num_starting_windows"]) # Set the value of the setting to the current max timer setting
-                setting_spinbox.config(to=20) # Set the maximum value of the spinbox to 20
-
-            # Configure the default value of the spinbox to the value (determined above)
+            setting_value.set(setting[1]["value"])
             setting_spinbox.config(textvariable=setting_value)
 
             # Sets the validate command to testVal (see below)
@@ -335,11 +334,7 @@ class Settings:
         # Calls all global setting variables and resets them to default 
         global settings
 
-        settings = {
-            "max_windows" : 20, 
-            "windows_created_upon_mistake" : 2,
-            "max_window_timer" : 15, 
-            "num_starting_windows" : 1}
+        settings_to_default()
 
         # Closes and reopens the settings window
         self.root.destroy()
@@ -352,42 +347,16 @@ class Settings:
 
         things_changed = False # Creates a variable which will be used to determine if any settings have been changed due to restrictions
 
-        if int(self.spinboxes[0].get()) < 1: # If the max open windows setting is less than 1
-            settings["max_windows"] = 1 # Set the max open windows setting to 1
-            things_changed = True # Set thingschanged to true
-        elif int(self.spinboxes[0].get()) > 50: # If the max open windows setting is greater than 50
-            settings["max_windows"] = 50 # Set the max open windows setting to 50
-            things_changed = True # Set thingschanged to true
-        else:
-            settings["max_windows"] = int(self.spinboxes[0].get())
-        
-        if int(self.spinboxes[1].get()) < 1: # If the created upon mistake setting is less than 1
-            settings["windows_created_upon_mistake"] = 1 # Set the created upon mistake setting to 1
-            things_changed = True # Set thingschanged to true
-        elif int(self.spinboxes[1].get()) > 10: # If the created upon mistake setting is greater than 10
-            settings["windows_created_upon_mistake"] = 10 # Set the created upon mistake setting to 10
-            things_changed = True # Set thingschanged to true
-        else:
-            settings["windows_created_upon_mistake"] = int(self.spinboxes[1].get()) 
+        for index, setting in enumerate(settings.items()):
+            if int(self.spinboxes[index].get()) < setting[1]["min"]:
+                self.spinboxes[index].set(int(setting[1]["value"]))
+                things_changed = True
+            elif int(self.spinboxes[index].get()) > setting[1]["max"]:
+                self.spinboxes[index].set(int(setting[1]["value"]))
+                things_changed = True
+            else:
+                setting[1]["value"] = int(self.spinboxes[index].get())
 
-        if int(self.spinboxes[2].get()) < 4: # If the max timer setting is less than 4
-            settings["max_window_timer"] = 4 # Set the max timer setting to 4
-            things_changed = True # Set thingschanged to true
-        if int(self.spinboxes[2].get()) > 9999: # If the max timer setting is greater than 99999
-            settings["max_window_timer"] = 9999 # Set the max timer setting to 9999
-            things_changed = True # Set thingschanged to true
-        else:
-            settings["max_window_timer"] = int(self.spinboxes[2].get())
-
-        if int(self.spinboxes[3].get()) < 1: # If the number of starting windows setting is less than 1
-            settings["num_starting_windows"] = 1 # Set the number of starting windows setting to 1
-            things_changed = True # Set thingschanged to true
-        if int(self.spinboxes[3].get()) > 20: # If the number of starting windows setting is greater than 20
-            settings["num_starting_windows"] = 20 # Set the number of starting windows setting to 20
-            things_changed = True # Set thingschanged to true
-        else:
-            settings["num_starting_windows"] = int(self.spinboxes[3].get())
-        
         if not things_changed: # If any no settings have been changed due to restrictions 
             # Closes the settings window and opens the main menu window
             self.root.destroy()
@@ -478,7 +447,7 @@ class Main_Menu:
         Main_Menu.score = 0
         if seen_instructions_state == True:
             self.root.destroy()
-            for i in range(0, settings["num_starting_windows"]):
+            for i in range(0, settings["num_starting_windows"]["value"]):
                 self.add_window()
         elif seen_instructions_state == False:
             # start the instructions window and after reading the instructions start the game
@@ -496,7 +465,7 @@ class Main_Menu:
 
     # Creates a function which will run when a window is to be added
     def add_window(self):
-        if Main_Menu.window_count < settings["max_windows"]:
+        if Main_Menu.window_count < settings["max_windows"]["value"]:
             # Create a new window by creating a new window instance
             window = Game_Window()
             # Save this Window to the list of windows
