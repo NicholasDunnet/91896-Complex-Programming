@@ -58,6 +58,7 @@ highscore = 0 # This variable is used to store the highscore
 maxwindows = 20 # This variable is used to set the maximum number of windows that can be opened at once
 windowscreateduponmistake = 2 # This variable is used to set the number of windows that are created when the user makes a mistake
 maxwindowtimer = 15 # This variable is used to set the maximum time that a window can be open for
+numstartingwindows = 1 # This variable is used to set the number of windows that are created when the game starts initially
 
 # Creating the Game window class 
 class GameWindow:
@@ -225,7 +226,8 @@ class Instructions:
     
     def start_game(self, event):
         self.root.destroy()
-        MainMenu.add_window(MainMenu)
+        for i in range(0, numstartingwindows):
+            MainMenu.add_window(MainMenu)
 
 # Creating the Settings window class  
 class Settings:
@@ -236,11 +238,11 @@ class Settings:
         self.root = tk.Tk()
         self.root.title("TIMUS")
 
-        # Sets the size of the window to 600 by 400 pixels
-        self.root.geometry("600x400")
+        # Sets the size of the window to 600 by 600 pixels
+        self.root.geometry("600x500")
         
-        # Sets the minimum size that the settings window can be resized to as 600 by 400 pixels
-        self.root.minsize(600, 400)
+        # Sets the minimum size that the settings window can be resized to as 600 by 600 pixels
+        self.root.minsize(600, 500)
 
         # Centers the window
         center(self.root)
@@ -255,7 +257,7 @@ class Settings:
         titlelabel.grid(row=0, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
 
         # Creates a list of settings which are to be created
-        settinglabels = ["maxopenwindows", "createduponmistake", "maxtimer"]
+        settinglabels = ["maxopenwindows", "createduponmistake", "maxtimer", "numstartingwindows"]
         
         # Creates a list of images and spinboxes are to be used for the settings
         images = []
@@ -285,6 +287,9 @@ class Settings:
             elif index == 2: # If the current setting is the max timer setting
                 settingvalue.set(maxwindowtimer) # Set the value of the setting to the current max timer setting
                 settingsspinbox.config(from_=4, to=9999) # Set the maximum value of the spinbox to 9999 and the minimum to 4
+            elif index == 3: # If the current setting is the max timer setting
+                settingvalue.set(numstartingwindows) # Set the value of the setting to the current max timer setting
+                settingsspinbox.config(to=20) # Set the maximum value of the spinbox to 20
 
             # Configure the default value of the spinbox to the value (determined above)
             settingsspinbox.config(textvariable=settingvalue)
@@ -301,12 +306,12 @@ class Settings:
         # Creates a button which will reset all settings to default
         settodefaultimage= tk.PhotoImage(file=getfilepath("settodefault.png"))
         settodefaultbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=settodefaultimage, command=lambda: self.reset_to_default())
-        settodefaultbutton.grid(row=4, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
+        settodefaultbutton.grid(row=5, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
 
         # Creates a button which will return to the main menu window 
         doneimage = tk.PhotoImage(file=getfilepath("done.png"))
         backbutton = tk.Button(content, borderwidth=10, background="white", relief="groove", image=doneimage, command=lambda: self.return_to_main_menu())
-        backbutton.grid(row=5, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
+        backbutton.grid(row=6, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
 
         # Set window close action to return to main menu rather than close the program
         self.root.protocol("WM_DELETE_WINDOW",lambda: self.return_to_main_menu())
@@ -332,10 +337,13 @@ class Settings:
         global maxwindows
         global windowscreateduponmistake
         global maxwindowtimer
+        global numstartingwindows
+
         maxwindows = 20
         windowscreateduponmistake = 2
         maxwindowtimer = 15
-        
+        numstartingwindows = 1
+
         # Closes and reopens the settings window
         self.root.destroy()
         application.settings = Settings()
@@ -346,6 +354,7 @@ class Settings:
         global maxwindows
         global windowscreateduponmistake
         global maxwindowtimer
+        global numstartingwindows
 
         thingschanged = False # Creates a variable which will be used to determine if any settings have been changed due to restrictions
 
@@ -375,6 +384,15 @@ class Settings:
             thingschanged = True # Set thingschanged to true
         else:
             maxwindowtimer = int(self.spinboxes[2].get())
+
+        if int(self.spinboxes[3].get()) < 1: # If the number of starting windows setting is less than 1
+            numstartingwindows = 1 # Set the number of starting windows setting to 1
+            thingschanged = True # Set thingschanged to true
+        if int(self.spinboxes[3].get()) > 20: # If the number of starting windows setting is greater than 20
+            numstartingwindows = 20 # Set the number of starting windows setting to 20
+            thingschanged = True # Set thingschanged to true
+        else:
+            numstartingwindows = int(self.spinboxes[3].get())
         
         if not thingschanged: # If any no settings have been changed due to restrictions 
             # Closes the settings window and opens the main menu window
@@ -466,7 +484,8 @@ class MainMenu:
         MainMenu.score = 0
         if seeninstructions == True:
             self.root.destroy()
-            self.add_window()
+            for i in range(0, numstartingwindows):
+                self.add_window()
         elif seeninstructions == False:
             # start the instructions window and after reading the instructions start the game
             self.instructions("start")
