@@ -66,6 +66,13 @@ def settings_to_default():
         {"value" : 1,
         "min" : 1,
         "max" : 20}}
+
+def create_widget(type, frame, **kwargs):
+    if type == "button":
+        return tk.Button(frame, borderwidth=10, background="white", relief="groove", **kwargs)
+    if type == "label":
+        return tk.Label(frame, borderwidth=10, background="white", relief="groove", **kwargs)
+
 # Creating global variables
 seen_instructions_state = False # This variable is used to check if the instructions have been seen since the program has run
 
@@ -347,12 +354,12 @@ class Settings:
 
         things_changed = False # Creates a variable which will be used to determine if any settings have been changed due to restrictions
 
-        for index, setting in enumerate(settings.items()):
+        for index, setting in enumerate(settings.items()):            
             if int(self.spinboxes[index].get()) < setting[1]["min"]:
-                self.spinboxes[index].set(int(setting[1]["value"]))
-                things_changed = True
+                setting[1]["value"] = setting[1]["min"]
+                things_changed = True  
             elif int(self.spinboxes[index].get()) > setting[1]["max"]:
-                self.spinboxes[index].set(int(setting[1]["value"]))
+                setting[1]["value"] = setting[1]["max"]
                 things_changed = True
             else:
                 setting[1]["value"] = int(self.spinboxes[index].get())
