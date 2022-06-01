@@ -67,12 +67,6 @@ def settings_to_default():
         "min" : 1,
         "max" : 20}}
 
-def create_widget(type, frame, **kwargs):
-    if type == "button":
-        return tk.Button(frame, borderwidth=10, background="white", relief="groove", **kwargs)
-    if type == "label":
-        return tk.Label(frame, borderwidth=10, background="white", relief="groove", **kwargs)
-
 # Creating global variables
 seen_instructions_state = False # This variable is used to check if the instructions have been seen since the program has run
 
@@ -81,6 +75,23 @@ highscore = 0 # This variable is used to store the highscore
 # This dictionary is used to store the settings and their corresponding values, minimums and maximums
 settings = {}
 settings_to_default()
+
+class StandardWindow:
+    # This class contains code for a basic window and formatting for widgets within that window
+    def __init__(self, width, height, minwidth, minheight):
+        # Create window
+        self.root = tk.Tk()
+        # Set the title of the window to "TIMUS"
+        self.root.title("TIMUS")
+        # Set the geometery of the window to that which is specified
+        self.root.geometry(f"{width}x{height}")
+        # Set the minimum size of the window to that which is specified
+        self.root.minsize(minwidth, minheight)
+        # Forces the window to be on top of all other currently open windows
+        self.root.attributes("-topmost", True)
+
+        # Centers the window on the users screen
+        center(self.root)
 
 # Creating the Game window class 
 class Game_Window:
@@ -189,18 +200,7 @@ class Instructions:
         
         self.action = action_after
 
-        # Create window
-        self.root = tk.Tk()
-        self.root.title("TIMUS")
-
-        # Sets the size of the window to 600 by 400 pixels
-        self.root.geometry("600x400")
-        
-        # Sets the minimum size that the main menu window can be resized to as 600 by 400 pixels
-        self.root.minsize(600, 400)
-
-        # Centers the window
-        center(self.root)
+        StandardWindow.__init__(self, 600, 400, 600, 400)
 
         # Creates a frame within the window and grids it
         content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
@@ -256,18 +256,7 @@ class Settings:
     """This class is used to create the Settings window
     """
     def __init__(self):
-        # Create window
-        self.root = tk.Tk()
-        self.root.title("TIMUS")
-
-        # Sets the size of the window to 600 by 600 pixels
-        self.root.geometry("600x500")
-        
-        # Sets the minimum size that the settings window can be resized to as 600 by 600 pixels
-        self.root.minsize(600, 500)
-
-        # Centers the window
-        center(self.root)
+        StandardWindow.__init__(self, 600, 500, 600, 500)
 
         # Creates a frame within the window and grids it
         content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
@@ -378,18 +367,7 @@ class Main_Menu:
     """This class is used to create the Main Menu window
     """
     def __init__(self):
-        # Create window
-        self.root = tk.Tk()
-        self.root.title("TIMUS")
-
-        # Sets the size of the window to 600 by 400 pixels
-        self.root.geometry("600x400")
-        
-        # Sets the minimum size that the main menu window can be resized to as 300 by 400 pixels
-        self.root.minsize(300, 400)
-
-        # Centers the window
-        center(self.root)
+        StandardWindow.__init__(self, 600, 400, 300, 400)        
 
         # Creates a frame within the window and grids it
         content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
