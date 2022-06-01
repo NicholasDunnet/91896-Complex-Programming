@@ -1,6 +1,6 @@
 # Importing modules
 import tkinter as tk       
-import pathlib, os, random, time, math
+import pathlib, os, random, time, math, pickle
 
 # Creating global functions
 def get_file_path(filename):
@@ -69,6 +69,37 @@ def configure_grid(self, content):
     # Returns
     return
 
+def load_data():  
+    """ This function loads all saved data, including the settings and the highscore
+    """
+    # References the global setting dictionary
+    global settings
+    
+    # References the global highscore
+    global highscore 
+    
+    # If there is a save file, load the settings and score from the save file
+    try: 
+        # Open the file timus.data
+        with (open("timus.data", 'rb')) as save: 
+            data = pickle.load(save)
+            print(data)
+            highscore = data["highscore"]
+            settings = data["settings"]    
+    
+    # If there is no save file, 
+    except FileNotFoundError:
+        highscore = 0
+        settings_to_default()
+
+def save_data(): 
+    """ This function creates a save file of the data at the end of the program
+    """
+    # Open or create a file called timus.data
+    with (open("timus.data", 'wb')) as save:
+        # Saves settings and highscore to the save file using pickle
+        pickle.dump({"settings": settings, "highscore": highscore}, save)
+
 # Creating global variables
 
 # This variable is used to check if the instructions have been seen since the program has run (by default is false)
@@ -80,8 +111,8 @@ highscore = 0
 # This dictionary is used to store the settings and their corresponding values, minimums and maximums
 settings = {}
 
-# Runs the settings to default function
-settings_to_default()
+# Runs the load data function
+load_data()
 
 # Creating the a Standard window class 
 class Standard_Window:
@@ -553,7 +584,7 @@ class Main_Menu:
                 button.config(command=lambda: self.settings())
             # If the button is the quit button, set the command to close the main menu
             elif button_label == "quit":
-                button.config(command=lambda: self.root.destroy())
+                button.config(command=lambda: self.end_game())
 
             # Place the button in descending order in the main menu window
             button.grid(column=2, row=index + 3, sticky = "nsew", padx=5, pady=5)
@@ -569,7 +600,7 @@ class Main_Menu:
 
         # Permanently loop the main menu window 
         self.root.mainloop()
-    
+
     def start_check(self):
         """ This function will check if the user is able to start the game
         """
@@ -649,6 +680,14 @@ class Main_Menu:
         self.root.destroy()
         # Opens the main menu
         application = Main_Menu()
+    
+    def end_game(self):
+        """ This function is run when the game is to be closed
+        """
+        # Closes the current window
+        self.root.destroy()
+        # Runs the save data function
+        save_data()
 
 # Starts the main menu
 application = Main_Menu()
