@@ -17,36 +17,6 @@ def get_file_path(filename):
     img_path = os.path.join(current_dir, filename) # Joins this filepath with the filename
     return img_path # Returns the complete filepath
 
-def center(window):
-    """This function centers the given window on the users screen
-
-    Args:
-        win (object): the window
-    """
-    
-    # Updates the information of the window
-    window.update_idletasks()
-    
-    # Gets the actual width of the window (frame included)
-    width = window.winfo_width()
-    frm_width = window.winfo_rootx() - window.winfo_x()
-    win_width = width + 2 * frm_width
-    
-    # Gets the actual height of the window (titlebar included)
-    height = window.winfo_height()
-    titlebar_height = window.winfo_rooty() - window.winfo_y()
-    win_height = height + titlebar_height + frm_width
-    
-    # Creates the x and y values of the window
-    x = window.winfo_screenwidth() // 2 - win_width // 2
-    y = window.winfo_screenheight() // 2 - win_height // 2
-
-    # Places the window using these x and y values
-    window.geometry('{}x{}+{}+{}'.format(width, height, x, y))
-    
-    # Stops the window flashing in the wrong location before being moved to center
-    window.deiconify()
-
 def settings_to_default():
     global settings
     settings = {
@@ -77,25 +47,62 @@ settings = {}
 settings_to_default()
 
 class StandardWindow:
-    # This class contains code for a basic window and formatting for widgets within that window
+    """ This class contains formatting for a basic window and buttons/labels
+    """
     def __init__(self, width, height, minwidth, minheight):
         # Create window
         self.root = tk.Tk()
+        
         # Set the title of the window to "TIMUS"
         self.root.title("TIMUS")
+        
         # Set the geometery of the window to that which is specified
         self.root.geometry(f"{width}x{height}")
+        
         # Set the minimum size of the window to that which is specified
         self.root.minsize(minwidth, minheight)
+        
         # Forces the window to be on top of all other currently open windows
         self.root.attributes("-topmost", True)
 
-        # Centers the window on the users screen
-        center(self.root)
+        # Updates the current information on the window
+        self.root.update_idletasks()
+        
+        # Gets the actual width of the window (frame included)
+        width = self.root.winfo_width()
+        frm_width = self.root.winfo_rootx() - self.root.winfo_x()
+        win_width = width + 2 * frm_width
+        
+        # Gets the actual height of the window (titlebar included)
+        height = self.root.winfo_height()
+        titlebar_height = self.root.winfo_rooty() - self.root.winfo_y()
+        win_height = height + titlebar_height + frm_width
+        
+        # Creates the x and y values of the window
+        x = self.root.winfo_screenwidth() // 2 - win_width // 2
+        y = self.root.winfo_screenheight() // 2 - win_height // 2
+
+        # Places the window using these x and y values
+        self.root.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+        
+        # Stops the window flashing in the wrong location before being moved to center
+        self.root.deiconify()
+
+    def Button(parent, **kwargs):
+        # Create a button with default formatting options
+        return tk.Button(parent, borderwidth=10, background="white", relief="groove", **kwargs)
+    
+    def TitleLabel(parent, **kwargs):
+        # Create a title label with default formatting options
+        return tk.Label(parent, bg="#ff0000", **kwargs)
+    
+    def StandardLabel(parent, **kwargs):
+        # Create a standard label with default formatting options
+        return tk.Label(parent, borderwidth=10, background="white", relief="groove", **kwargs)
 
 # Creating the Game window class 
 class Game_Window:
-    """This class is used to create each game window
+    """ This class is used to create each game window
     """
     def __init__(self):
         # Create window
@@ -193,13 +200,16 @@ class Game_Window:
 
 # Creating the Instructions window class  
 class Instructions:
-    """This class is used to create the instructions window
+    """ This class is used to create the instructions window
     """
     def __init__(self, action_after):
+        # References the seen instructions state
         global seen_instructions_state
         
+        # Stores the action to perform afterwards to self.action
         self.action = action_after
 
+        # Creates a standard window
         StandardWindow.__init__(self, 600, 400, 600, 400)
 
         # Creates a frame within the window and grids it
@@ -208,17 +218,18 @@ class Instructions:
         
         # Receives the title image from the assets folder and places in on the window
         title_image= tk.PhotoImage(file=get_file_path("instructionstitle.png"))
-        title_label = tk.Label(content, image=title_image, bg="#ff0000", padx=5, pady=5)
+        title_label = StandardWindow.TitleLabel(content, image=title_image)
+        
         title_label.grid(row=0, column=0, columnspan=5, sticky = "nsew", padx=5, pady=5)
 
         # Creates a label which will display the instructions
         instructions_blurb_image= tk.PhotoImage(file=get_file_path("instructionsblurb.png"))
-        instructions_blurb_label = tk.Label(content, borderwidth=10, background="white", relief="groove", image=instructions_blurb_image)
+        instructions_blurb_label = StandardWindow.StandardLabel(content, image=instructions_blurb_image)
         instructions_blurb_label.grid(row=1, column=2, sticky = "nsew", padx=5, pady=5)
 
         # Creates a button which will return to the main menu window or start the game depending if the user has read the instructions 
         done_image = tk.PhotoImage(file=get_file_path("done.png"))
-        back_button = tk.Button(content, borderwidth=10, background="white", relief="groove", image=done_image)
+        back_button = StandardWindow.Button(content, image=done_image)
         if self.action == "start":
             back_button.config(command=lambda: self.start_game(self))
         elif self.action == "mainmenu":
@@ -253,9 +264,10 @@ class Instructions:
 
 # Creating the Settings window class  
 class Settings:
-    """This class is used to create the Settings window
+    """ This class is used to create the Settings window
     """
     def __init__(self):
+        # Creates a standard window
         StandardWindow.__init__(self, 600, 500, 600, 500)
 
         # Creates a frame within the window and grids it
@@ -264,7 +276,7 @@ class Settings:
         
         # Receives the title image from the assets folder and places in on the window
         title_image= tk.PhotoImage(file=get_file_path("settingstitle.png"))
-        title_label = tk.Label(content, image=title_image, bg="#ff0000", padx=5, pady=5)
+        title_label = StandardWindow.TitleLabel(content, image=title_image)
         title_label.grid(row=0, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
         
         # Creates a list of images and spinboxes are to be used for the settings
@@ -277,7 +289,7 @@ class Settings:
             images.append(tk.PhotoImage(file=get_file_path(setting[0] + ".png")))
 
             # Create a label for the setting
-            setting_label = tk.Label(content, borderwidth=10, background="white", relief="groove", image=images[index])
+            setting_label = StandardWindow.StandardLabel(content, image=images[index])
 
             # Places the label
             setting_label.grid(row=index+1, column=0, columnspan=2, sticky = "nsew", padx=5, pady=5)
@@ -299,7 +311,7 @@ class Settings:
 
         # Creates a button which will reset all settings to default
         set_to_default_image= tk.PhotoImage(file=get_file_path("settodefault.png"))
-        set_to_default_button = tk.Button(content, borderwidth=10, background="white", relief="groove", image=set_to_default_image, command=lambda: self.reset_to_default())
+        set_to_default_button = StandardWindow.Button(content, image=set_to_default_image, command=lambda: self.reset_to_default())
         set_to_default_button.grid(row=5, column=0, columnspan=4, sticky = "nsew", padx=5, pady=5)
 
         # Creates a button which will return to the main menu window 
@@ -364,9 +376,10 @@ class Settings:
 
 # Creating the Main Menu class
 class Main_Menu:
-    """This class is used to create the Main Menu window
+    """ This class is used to create the Main Menu window
     """
     def __init__(self):
+        # Creates a standard window
         StandardWindow.__init__(self, 600, 400, 300, 400)        
 
         # Creates a frame within the window and grids it
@@ -375,12 +388,12 @@ class Main_Menu:
         
         # Receives the title image from the assets folder and places in on the window
         title_image= tk.PhotoImage(file=get_file_path("title.png"))
-        title_label = tk.Label(content, image=title_image, bg="#ff0000")
+        title_label = StandardWindow.TitleLabel(content, image=title_image)
         title_label.grid(row=0, column=0, rowspan=2, columnspan=5, sticky = "nsew")
 
         # Creates a label underneath the title which will display the user"s high score
         score_text = "High Score: " + str(highscore)
-        score_label = tk.Label(content, borderwidth=10, background="white", relief="groove", text=score_text, font=("Trebuchet MS bold", 12))
+        score_label = StandardWindow.StandardLabel(content, text=score_text, font=("Trebuchet MS bold", 12))
         score_label.grid(row=2, column=2, sticky = "nsew", padx=5, pady=5)
 
         # Creates a list of buttons which are to be created
@@ -395,8 +408,8 @@ class Main_Menu:
             images.append(tk.PhotoImage(file=get_file_path(button_label + ".png")))
             
             # Create a button with this image
-            button = tk.Button(content, borderwidth=10, background="white", relief="groove", image=images[index])
-        
+            button = StandardWindow.Button(content, image=images[index])
+
             # Configures the command on the button to run the appropriate function
             if button_label == "start": # If the button is the start button, set the command to run the start() function
                 button.config(command=lambda: self.start())
