@@ -17,7 +17,8 @@ def get_file_path(filename):
         filename (string): the name of the file (e.g. "image.png")
 
     Returns:
-        string: the filepath of the given filename (e.g. "C:/Users/User/Desktop/image.png")
+        string: the filepath of the given filename
+                (e.g. "C:/Users/User/Desktop/image.png")
     """
     # This gets the current directory where the program is running
     current_dir = pathlib.Path(__file__).parent.resolve()
@@ -63,7 +64,7 @@ def configure_grid(self, content):
 
     Args:
         self (object): The window
-        content (object): The frame within the window chich within the grid to be configured sits
+        content (object): The frame within the window which within the grid to be configured sits
     """
     # Configures the main window for resizing
     self.root.columnconfigure(0, weight=1)
@@ -80,25 +81,25 @@ def configure_grid(self, content):
 
 
 def load_data():
-    """ This function loads all saved data, including the settings and the highscore
+    """ This function loads all saved data, including the settings and the high score
     """
     # References the global setting dictionary
     global settings
 
-    # References the global highscore
-    global highscore
+    # References the global high_score
+    global high_score
 
     # If there is a save file, load the settings and score from the save file
     try:
         # Open the file timus.data
         with (open("timus.data", 'rb')) as save:
             data = pickle.load(save)
-            highscore = data["highscore"]
+            high_score = data["high_score"]
             settings = data["settings"]
 
     # If there is no save file,
     except FileNotFoundError:
-        highscore = 0
+        high_score = 0
         settings_to_default()
 
 
@@ -107,8 +108,8 @@ def save_data():
     """
     # Open or create a file called timus.data
     with (open("timus.data", 'wb')) as save:
-        # Saves settings and highscore to the save file using pickle
-        pickle.dump({"settings": settings, "highscore": highscore}, save)
+        # Saves settings and high_score to the save file using pickle
+        pickle.dump({"settings": settings, "high_score": high_score}, save)
 
 # Creating global variables
 
@@ -116,8 +117,8 @@ def save_data():
 # This variable is used to check if the instructions have been seen since the program has run (by default is false)
 seen_instructions_state = False
 
-# This variable is later used to store the highscore (by default is 0)
-highscore = 0
+# This variable is later used to store the high_score (by default is 0)
+high_score = 0
 
 # This dictionary is used to store the settings and their corresponding values, minimums and maximums
 settings = {}
@@ -132,14 +133,14 @@ class Standard_Window:
     """ This class contains formatting for a basic window and buttons/labels
     """
 
-    def __init__(self, width, height, minwidth, minheight):
-        """ Initilise a new blank window
+    def __init__(self, width, height, min_width, min_height):
+        """ Initialise a new blank window
 
         Args:
             width (integer): The width of the window
             height (integer): The height of the window
-            minwidth (integer): The minimum width the window can be resized to
-            minheight (integer): The minimum height the window can be resized to
+            min_width (integer): The minimum width the window can be resized to
+            min_height (integer): The minimum height the window can be resized to
         """
         # Create window
         self.root = tk.Tk()
@@ -147,11 +148,11 @@ class Standard_Window:
         # Set the title of the window to "TIMUS"
         self.root.title("TIMUS")
 
-        # Set the geometery of the window to that which is specified
+        # Set the geometry of the window to that which is specified
         self.root.geometry(f"{width}x{height}")
 
         # Set the minimum size of the window to that which is specified
-        self.root.minsize(minwidth, minheight)
+        self.root.minsize(min_width, min_height)
 
         # Forces the window to be on top of all other currently open windows
         self.root.attributes("-topmost", True)
@@ -164,10 +165,10 @@ class Standard_Window:
         frm_width = self.root.winfo_rootx() - self.root.winfo_x()
         win_width = width + 2 * frm_width
 
-        # Gets the actual height of the window (titlebar included)
+        # Gets the actual height of the window (title bar included)
         height = self.root.winfo_height()
-        titlebar_height = self.root.winfo_rooty() - self.root.winfo_y()
-        win_height = height + titlebar_height + frm_width
+        title_bar_height = self.root.winfo_rooty() - self.root.winfo_y()
+        win_height = height + title_bar_height + frm_width
 
         # Creates the x and y values of the window
         x = self.root.winfo_screenwidth() // 2 - win_width // 2
@@ -186,9 +187,9 @@ class Standard_Window:
             parent (object): Where the button is being placed (i.e. frame, canvas)
 
         Returns:
-            tkinter button: A button with the default settings 
+            tkinter button: A button with the default settings
         """
-        # Retuns a button with default settings of borderwidth, background and relief
+        # Returns a button with default settings of borderwidth, background and relief
         return tk.Button(parent, borderwidth=10, background="white", relief="groove", **kwargs)
 
     def title_label(parent, **kwargs):
@@ -198,7 +199,7 @@ class Standard_Window:
             parent (object): Where the label is being placed (i.e. frame, canvas)
 
         Returns:
-            tkinter label: A label with the default settings 
+            tkinter label: A label with the default settings
         """
         # Returns a title label with default settings of background
         return tk.Label(parent, bg="#ff0000", **kwargs)
@@ -210,7 +211,7 @@ class Standard_Window:
             parent (object): Where the label is being placed (i.e. frame, canvas)
 
         Returns:
-            tkinter label: A label with the default settings 
+            tkinter label: A label with the default settings
         """
         # Returns a title label with default settings of background, borderwidth and relief
         return tk.Label(parent, borderwidth=10, background="white", relief="groove", **kwargs)
@@ -238,11 +239,11 @@ class Game_Window:
         screen_height = self.root.winfo_screenheight()
 
         # Figures out where to place the window on the screen so that the window is not off the screen
-        xpos = random.randint(0, screen_width - window_width)
-        ypos = random.randint(0, screen_height - window_height)
+        x_pos = random.randint(0, screen_width - window_width)
+        y_pos = random.randint(0, screen_height - window_height)
 
         # Creates the window on the screen at this location
-        self.root.geometry(f"{window_width}x{window_height}+{xpos}+{ypos}")
+        self.root.geometry(f"{window_width}x{window_height}+{x_pos}+{y_pos}")
 
         # Disables the resizing of the window
         self.root.resizable(False, False)
@@ -255,12 +256,12 @@ class Game_Window:
                            lambda: Main_Menu.del_windows(Main_Menu))
 
         # Binds a click on the window to the click() function
-        self.root.bind(" < Button-1 > ", self.click)
+        self.root.bind(" <Button-1> ", self.click)
 
         # Determines the amount of time to click on the window (determined by the current settings)
         self.start_time = time.time()
         self.run_time = random.randint((math.ceil(
-            settings["max_window_timer"]["value"]/4)), settings["max_window_timer"]["value"])
+            settings["max_window_timer"]["value"] / 4)), settings["max_window_timer"]["value"])
         self.end_time = self.start_time + self.run_time
         self.time_left = self.end_time - time.time()
 
@@ -277,23 +278,23 @@ class Game_Window:
         """
         # Updates the amount of time left on the label
         self.time_left = self.end_time - time.time()
-        timeleft = round(self.time_left, 1)
-        self.label.config(text=str(timeleft))
+        time_left = round(self.time_left, 1)
+        self.label.config(text=str(time_left))
 
         # If the time left is greater than 5, set background of window and label to green
-        if timeleft > 5:
+        if time_left > 5:
             self.label.config(bg="green")
             self.root.config(bg="green")
         # If the time left is greater than 3, set background of window and label to yellow
-        elif timeleft > 3:
+        elif time_left > 3:
             self.label.config(bg="yellow")
             self.root.config(bg="yellow")
         # If the time left is greater than 1, set background of window and label to red
-        elif timeleft > 1:
+        elif time_left > 1:
             self.label.config(bg="red")
             self.root.config(bg="red")
         # If the time left is greater than 0, set background of window and label to black and the text color to white
-        elif timeleft > 0:
+        elif time_left > 0:
             self.label.config(bg="black", fg="white")
             self.root.config(bg="black")
         # If the time left is less than 0 (if the user does not click on the window in time);
@@ -314,7 +315,7 @@ class Game_Window:
             event (object): The event that happened (i.e. left mouse click)
         """
         # References the global high score variable
-        global highscore
+        global high_score
 
         # If the time left is less that 1
         if self.time_left < 1:
@@ -327,9 +328,9 @@ class Game_Window:
             # If there are no windows left open
             if Main_Menu.window_count == 0:
                 # If the users current score is greater than the high score
-                if Main_Menu.score > highscore:
+                if Main_Menu.score > high_score:
                     # Set the high score to the users current score
-                    highscore = Main_Menu.score
+                    high_score = Main_Menu.score
 
                 # Delete the data from all of the windows
                 Main_Menu.del_windows(Main_Menu)
@@ -401,7 +402,7 @@ class Instructions:
             # Configure the button to run the start game function in the main menu class
             back_button.config(command=lambda: Main_Menu.start_game(self))
 
-        # If the action to perform afterwars is to return to the main menu
+        # If the action to perform afterwards is to return to the main menu
         elif self.action == "mainmenu":
             # Configure the button to run the return to main menu function in the main menu class
             back_button.config(
@@ -414,7 +415,7 @@ class Instructions:
         self.root.protocol("WM_DELETE_WINDOW",
                            lambda: Main_Menu.return_to_main_menu(self))
 
-        # Sets the seeninstructions variable to true
+        # Sets the seen instructions variable to true
         seen_instructions_state = True
 
         # Configure all columns and rows within the instructions window to expand to fill the window if resized
@@ -446,9 +447,9 @@ class Settings:
         title_label.grid(row=0, column=0, columnspan=4,
                          sticky="nsew", padx=5, pady=5)
 
-        # Creates a list of images and spinboxes are to be used for the settings
+        # Creates a list of images and spin boxes are to be used for the settings
         images = []
-        self.spinboxes = []
+        self.spin_boxes = []
 
         # For each button in the list of buttons, do the following
         for index, setting in enumerate(settings.items()):
@@ -461,7 +462,7 @@ class Settings:
                 content, image=images[index])
 
             # Places the label
-            setting_label.grid(row=index+1, column=0,
+            setting_label.grid(row=index + 1, column=0,
                                columnspan=2, sticky="nsew", padx=5, pady=5)
             setting_spinbox = tk.Spinbox(content, from_=setting[1]["min"], to=setting[1]["max"], width=3, wrap=True, font=(
                 "Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate="key")
@@ -475,11 +476,11 @@ class Settings:
             setting_spinbox["validatecommand"] = (
                 setting_spinbox.register(self.test_value), "%P", "%d")
 
-            # Adds the spinbox to the list of spinboxes
-            self.spinboxes.append(setting_spinbox)
+            # Adds the spinbox to the list of spin boxes
+            self.spin_boxes.append(setting_spinbox)
 
             # Places the spinbox in the window
-            setting_spinbox.grid(row=index+1, column=3,
+            setting_spinbox.grid(row=index + 1, column=3,
                                  sticky="nsew", padx=5, pady=5)
 
         # Creates a button which will reset all settings to default
@@ -508,7 +509,7 @@ class Settings:
         self.root.mainloop()
 
     def test_value(self, character_added, action):
-        """ This function is used to check if a character added to a spinbox is a valid intiger
+        """ This function is used to check if a character added to a spinbox is a valid integer
 
         Args:
             character_added (string): What character is being added
@@ -521,7 +522,7 @@ class Settings:
         if action == "1":
             # If the character is not a digit
             if not character_added.isdigit():
-                # Return false and dont allow character to be typed
+                # Return false and don't allow character to be typed
                 return False
         # Return true and allow character to be typed
         return True
@@ -551,7 +552,7 @@ class Settings:
         # For each setting in settings
         for index, setting in enumerate(settings.items()):
             # If the value of the spinbox is less than the minimum value of the setting
-            if int(self.spinboxes[index].get()) < setting[1]["min"]:
+            if int(self.spin_boxes[index].get()) < setting[1]["min"]:
                 # Set the value of the setting to the minimum
                 setting[1]["value"] = setting[1]["min"]
 
@@ -559,7 +560,7 @@ class Settings:
                 things_changed = True
 
             # If the value of the spinbox is greater than the maximum value of the setting
-            elif int(self.spinboxes[index].get()) > setting[1]["max"]:
+            elif int(self.spin_boxes[index].get()) > setting[1]["max"]:
                 # Set the value of the setting to the maximum
                 setting[1]["value"] = setting[1]["max"]
 
@@ -568,7 +569,7 @@ class Settings:
             # If the value of the spinbox is between the maximum and minimum value of the given setting
             else:
                 # Set the value of the setting to the value of the spinbox
-                setting[1]["value"] = int(self.spinboxes[index].get())
+                setting[1]["value"] = int(self.spin_boxes[index].get())
 
         # If any no settings have been changed due to restrictions
         if not things_changed:
@@ -605,7 +606,7 @@ class Main_Menu:
                          columnspan=5, sticky="nsew")
 
         # Creates a label underneath the title which will display the user"s high score
-        score_text = "High Score: " + str(highscore)
+        score_text = "High Score: " + str(high_score)
         score_label = Standard_Window.standard_label(
             content, text=score_text, font=("Trebuchet MS bold", 12))
         score_label.grid(row=2, column=2, sticky="nsew", padx=5, pady=5)
@@ -657,11 +658,11 @@ class Main_Menu:
         """ This function will check if the user is able to start the game
         """
         # If the user has seen the instructions
-        if seen_instructions_state == True:
+        if seen_instructions_state is True:
             # Run the start game function
             self.start_game()
         # If the user has not seen the instructions
-        elif seen_instructions_state == False:
+        elif seen_instructions_state is False:
             # Start the instructions window with the after-action to start the game
             self.instructions("start")
 
@@ -690,7 +691,7 @@ class Main_Menu:
             Main_Menu.window_count += 1
         # If the current window count is equal to or greater than the maximum window setting
         else:
-            # Remove 10 points from the users score and dont open another window
+            # Remove 10 points from the users score and don't open another window
             Main_Menu.score -= 10
 
     def del_windows(self):
