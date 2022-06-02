@@ -1,8 +1,15 @@
 # Importing modules
-import tkinter as tk       
-import pathlib, os, random, time, math, pickle
+import tkinter as tk
+import pathlib
+import os
+import random
+import time
+import math
+import pickle
 
 # Creating global functions
+
+
 def get_file_path(filename):
     """This function returns the filepath of the given filename
 
@@ -13,41 +20,43 @@ def get_file_path(filename):
         string: the filepath of the given filename (e.g. "C:/Users/User/Desktop/image.png")
     """
     # This gets the current directory where the program is running
-    current_dir = pathlib.Path(__file__).parent.resolve() 
+    current_dir = pathlib.Path(__file__).parent.resolve()
 
     # Joins this filepath with the assets folder
-    current_dir = os.path.join(current_dir, "assets/") 
+    current_dir = os.path.join(current_dir, "assets/")
 
     # Joins this filepath with the filename
-    img_path = os.path.join(current_dir, filename) 
+    img_path = os.path.join(current_dir, filename)
 
     # Returns the complete filepath
-    return img_path 
+    return img_path
+
 
 def settings_to_default():
     """ This function resets all of the settings to their default values
     """
     # References the global setting dictionary
     global settings
-    
+
     # Overwrites the current settings dictionary with the default settings
     settings = {
-    "max_windows" : 
-        {"value" : 20, 
-        "min" : 1, 
-        "max" : 50}, 
-    "windows_created_upon_mistake" : 
-        {"value" : 2, 
-        "min" : 1, 
-        "max" : 10},  
-    "max_window_timer" : 
-        {"value" : 15, 
-        "min" : 4, 
-        "max" : 9999},  
-    "num_starting_windows" : 
-        {"value" : 1, 
-        "min" : 1, 
-        "max" : 20}}
+        "max_windows":
+        {"value": 20,
+         "min": 1,
+         "max": 50},
+        "windows_created_upon_mistake":
+        {"value": 2,
+         "min": 1,
+         "max": 10},
+        "max_window_timer":
+        {"value": 15,
+         "min": 4,
+         "max": 9999},
+        "num_starting_windows":
+        {"value": 1,
+         "min": 1,
+         "max": 20}}
+
 
 def configure_grid(self, content):
     """ This function configures the rows and columns of a grid for resizing
@@ -57,41 +66,43 @@ def configure_grid(self, content):
         content (object): The frame within the window chich within the grid to be configured sits
     """
     # Configures the main window for resizing
-    self.root.columnconfigure(0, weight = 1)
-    self.root.rowconfigure(0, weight = 1)
-    
+    self.root.columnconfigure(0, weight=1)
+    self.root.rowconfigure(0, weight=1)
+
     # Configures the rows and columns within the grid for resizing
-    for i in range (0, content.grid_size()[0]):
-        content.columnconfigure(i, weight = 1)
-    for i in range (0, content.grid_size()[1]):
-        content.rowconfigure(i, weight = 1)
-    
+    for i in range(0, content.grid_size()[0]):
+        content.columnconfigure(i, weight=1)
+    for i in range(0, content.grid_size()[1]):
+        content.rowconfigure(i, weight=1)
+
     # Returns
     return
 
-def load_data():  
+
+def load_data():
     """ This function loads all saved data, including the settings and the highscore
     """
     # References the global setting dictionary
     global settings
-    
+
     # References the global highscore
-    global highscore 
-    
+    global highscore
+
     # If there is a save file, load the settings and score from the save file
-    try: 
+    try:
         # Open the file timus.data
-        with (open("timus.data", 'rb')) as save: 
+        with (open("timus.data", 'rb')) as save:
             data = pickle.load(save)
             highscore = data["highscore"]
-            settings = data["settings"]    
-    
-    # If there is no save file, 
+            settings = data["settings"]
+
+    # If there is no save file,
     except FileNotFoundError:
         highscore = 0
         settings_to_default()
 
-def save_data(): 
+
+def save_data():
     """ This function creates a save file of the data at the end of the program
     """
     # Open or create a file called timus.data
@@ -101,11 +112,12 @@ def save_data():
 
 # Creating global variables
 
+
 # This variable is used to check if the instructions have been seen since the program has run (by default is false)
-seen_instructions_state = False 
+seen_instructions_state = False
 
 # This variable is later used to store the highscore (by default is 0)
-highscore = 0 
+highscore = 0
 
 # This dictionary is used to store the settings and their corresponding values, minimums and maximums
 settings = {}
@@ -113,10 +125,13 @@ settings = {}
 # Runs the load data function
 load_data()
 
-# Creating the a Standard window class 
+# Creating the a Standard window class
+
+
 class Standard_Window:
     """ This class contains formatting for a basic window and buttons/labels
     """
+
     def __init__(self, width, height, minwidth, minheight):
         """ Initilise a new blank window
 
@@ -128,39 +143,39 @@ class Standard_Window:
         """
         # Create window
         self.root = tk.Tk()
-        
+
         # Set the title of the window to "TIMUS"
         self.root.title("TIMUS")
-        
+
         # Set the geometery of the window to that which is specified
         self.root.geometry(f"{width}x{height}")
-        
+
         # Set the minimum size of the window to that which is specified
         self.root.minsize(minwidth, minheight)
-        
+
         # Forces the window to be on top of all other currently open windows
         self.root.attributes("-topmost", True)
 
         # Updates the current information on the window so that it can be centered later
         self.root.update_idletasks()
-        
+
         # Gets the actual width of the window (frame included)
         width = self.root.winfo_width()
         frm_width = self.root.winfo_rootx() - self.root.winfo_x()
         win_width = width + 2 * frm_width
-        
+
         # Gets the actual height of the window (titlebar included)
         height = self.root.winfo_height()
         titlebar_height = self.root.winfo_rooty() - self.root.winfo_y()
         win_height = height + titlebar_height + frm_width
-        
+
         # Creates the x and y values of the window
         x = self.root.winfo_screenwidth() // 2 - win_width // 2
         y = self.root.winfo_screenheight() // 2 - win_height // 2
 
         # Places the window using these x and y values
         self.root.geometry('{}x{}+{}+{}'.format(width, height, x, y))
-        
+
         # Stops the window flashing in the wrong location before being moved to center
         self.root.deiconify()
 
@@ -174,8 +189,8 @@ class Standard_Window:
             tkinter button: A button with the default settings 
         """
         # Retuns a button with default settings of borderwidth, background and relief
-        return tk.Button(parent, borderwidth = 10, background = "white", relief = "groove", **kwargs)
-    
+        return tk.Button(parent, borderwidth=10, background="white", relief="groove", **kwargs)
+
     def title_label(parent, **kwargs):
         """ Creates a title label with default formatting options
 
@@ -186,8 +201,8 @@ class Standard_Window:
             tkinter label: A label with the default settings 
         """
         # Returns a title label with default settings of background
-        return tk.Label(parent, bg = "#ff0000", **kwargs)
-    
+        return tk.Label(parent, bg="#ff0000", **kwargs)
+
     def standard_label(parent, **kwargs):
         """ Creates a standard label with default formatting options
 
@@ -198,12 +213,15 @@ class Standard_Window:
             tkinter label: A label with the default settings 
         """
         # Returns a title label with default settings of background, borderwidth and relief
-        return tk.Label(parent, borderwidth = 10, background = "white", relief = "groove", **kwargs)
+        return tk.Label(parent, borderwidth=10, background="white", relief="groove", **kwargs)
 
-# Creating the Game window class 
+# Creating the Game window class
+
+
 class Game_Window:
     """ This class is used to create each game window
     """
+
     def __init__(self):
         """ Initialises a new game window
         """
@@ -233,20 +251,23 @@ class Game_Window:
         self.root.attributes("-topmost", True)
 
         # Set window close action to close all currently open windows
-        self.root.protocol("WM_DELETE_WINDOW", lambda: Main_Menu.del_windows(Main_Menu))
+        self.root.protocol("WM_DELETE_WINDOW",
+                           lambda: Main_Menu.del_windows(Main_Menu))
 
         # Binds a click on the window to the click() function
         self.root.bind(" < Button-1 > ", self.click)
 
         # Determines the amount of time to click on the window (determined by the current settings)
         self.start_time = time.time()
-        self.run_time = random.randint((math.ceil(settings["max_window_timer"]["value"]/4)), settings["max_window_timer"]["value"])
+        self.run_time = random.randint((math.ceil(
+            settings["max_window_timer"]["value"]/4)), settings["max_window_timer"]["value"])
         self.end_time = self.start_time + self.run_time
         self.time_left = self.end_time - time.time()
 
         # Creates and places a label which will display the amount of time left
-        self.label = tk.Label(self.root, text = str(self.time_left), font = ("Trebuchet MS", 50))
-        self.label.place(relx = 0.5, rely = 0.5, anchor = tk.CENTER)
+        self.label = tk.Label(self.root, text=str(
+            self.time_left), font=("Trebuchet MS", 50))
+        self.label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
         # Begins by running the loop() function immediately
         self.loop()
@@ -257,32 +278,32 @@ class Game_Window:
         # Updates the amount of time left on the label
         self.time_left = self.end_time - time.time()
         timeleft = round(self.time_left, 1)
-        self.label.config(text = str(timeleft))
-        
+        self.label.config(text=str(timeleft))
+
         # If the time left is greater than 5, set background of window and label to green
-        if timeleft > 5: 
-            self.label.config(bg = "green")
-            self.root.config(bg = "green")
+        if timeleft > 5:
+            self.label.config(bg="green")
+            self.root.config(bg="green")
         # If the time left is greater than 3, set background of window and label to yellow
-        elif timeleft > 3: 
-            self.label.config(bg = "yellow")
-            self.root.config(bg = "yellow")
+        elif timeleft > 3:
+            self.label.config(bg="yellow")
+            self.root.config(bg="yellow")
         # If the time left is greater than 1, set background of window and label to red
-        elif timeleft > 1: 
-            self.label.config(bg = "red")
-            self.root.config(bg = "red")
+        elif timeleft > 1:
+            self.label.config(bg="red")
+            self.root.config(bg="red")
         # If the time left is greater than 0, set background of window and label to black and the text color to white
-        elif timeleft > 0: 
-            self.label.config(bg = "black", fg = "white")
-            self.root.config(bg = "black")
+        elif timeleft > 0:
+            self.label.config(bg="black", fg="white")
+            self.root.config(bg="black")
         # If the time left is less than 0 (if the user does not click on the window in time);
-        else: 
+        else:
             # Run the delete self function
             self.delete_self()
             # Open the correct amount of game windows (determined by the current setting)
-            for i in range (settings["windows_created_upon_mistake"]["value"]):
+            for i in range(settings["windows_created_upon_mistake"]["value"]):
                 Main_Menu.add_window(Main_Menu)
-        
+
         # Runs the loop() function again after 100ms
         self.root.after(100, self.loop)
 
@@ -294,9 +315,9 @@ class Game_Window:
         """
         # References the global high score variable
         global highscore
-        
+
         # If the time left is less that 1
-        if self.time_left < 1: 
+        if self.time_left < 1:
             # Run the delete self function
             self.delete_self()
 
@@ -304,36 +325,39 @@ class Game_Window:
             Main_Menu.score += 10
 
             # If there are no windows left open
-            if Main_Menu.window_count == 0: 
+            if Main_Menu.window_count == 0:
                 # If the users current score is greater than the high score
                 if Main_Menu.score > highscore:
                     # Set the high score to the users current score
                     highscore = Main_Menu.score
-                
+
                 # Delete the data from all of the windows
                 Main_Menu.del_windows(Main_Menu)
-                
+
                 # Open the Main Menu
                 application = Main_Menu()
-                
-        else: # If the user clicks when the timer is not < 1 second, run the delete_self() function and open 2 more windows
+
+        else:  # If the user clicks when the timer is not < 1 second, run the delete_self() function and open 2 more windows
             self.delete_self()
-            for i in range (settings["windows_created_upon_mistake"]["value"]):
+            for i in range(settings["windows_created_upon_mistake"]["value"]):
                 Main_Menu.add_window(Main_Menu)
 
     def delete_self(self):
         """ This function will delete the given window
         """
         # Delete the current window
-        self.root.destroy() 
+        self.root.destroy()
 
         # Reduce the amount of windows open by 1
-        Main_Menu.window_count -= 1 
+        Main_Menu.window_count -= 1
 
-# Creating the Instructions window class  
+# Creating the Instructions window class
+
+
 class Instructions:
     """ This class is used to create the instructions window
     """
+
     def __init__(self, action_after):
         """ Initialises the instructions window
 
@@ -342,7 +366,7 @@ class Instructions:
         """
         # References the seen instructions state
         global seen_instructions_state
-        
+
         # Stores the action to perform afterwards to self.action
         self.action = action_after
 
@@ -350,38 +374,45 @@ class Instructions:
         Standard_Window.__init__(self, 900, 700, 900, 700)
 
         # Creates a frame within the window and grids it
-        content = tk.Frame(self.root, padx = 12, pady = 12, bg = "#ff0000")
-        content.grid(column = 0, row = 0, sticky = "nsew")
-        
+        content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
+        content.grid(column=0, row=0, sticky="nsew")
+
         # Receives the title image from the assets folder and places in on the window
-        title_image = tk.PhotoImage(file = get_file_path("instructionstitle.png"))
-        title_label = Standard_Window.title_label(content, image = title_image)
-        title_label.grid(row = 0, column = 0, columnspan = 5, sticky = "nsew", padx = 5, pady = 5)
+        title_image = tk.PhotoImage(
+            file=get_file_path("instructionstitle.png"))
+        title_label = Standard_Window.title_label(content, image=title_image)
+        title_label.grid(row=0, column=0, columnspan=5,
+                         sticky="nsew", padx=5, pady=5)
 
         # Creates a label which will display the instructions
-        instructions_blurb_image = tk.PhotoImage(file = get_file_path("instructionsblurb.png"))
-        instructions_blurb_label = Standard_Window.standard_label(content, image = instructions_blurb_image)
-        instructions_blurb_label.grid(row = 1, column = 2, sticky = "nsew", padx = 5, pady = 5)
+        instructions_blurb_image = tk.PhotoImage(
+            file=get_file_path("instructionsblurb.png"))
+        instructions_blurb_label = Standard_Window.standard_label(
+            content, image=instructions_blurb_image)
+        instructions_blurb_label.grid(
+            row=1, column=2, sticky="nsew", padx=5, pady=5)
 
-        # Creates a button which will perform an action after the user has read the instructions 
-        done_image = tk.PhotoImage(file = get_file_path("done.png"))
-        back_button = Standard_Window.button(content, image = done_image)
-        
+        # Creates a button which will perform an action after the user has read the instructions
+        done_image = tk.PhotoImage(file=get_file_path("done.png"))
+        back_button = Standard_Window.button(content, image=done_image)
+
         # If the action to perform afterwards is to start the game
         if self.action == "start":
             # Configure the button to run the start game function in the main menu class
-            back_button.config(command = lambda: Main_Menu.start_game(self))
-        
+            back_button.config(command=lambda: Main_Menu.start_game(self))
+
         # If the action to perform afterwars is to return to the main menu
         elif self.action == "mainmenu":
             # Configure the button to run the return to main menu function in the main menu class
-            back_button.config(command = lambda: Main_Menu.return_to_main_menu(self))
-        
+            back_button.config(
+                command=lambda: Main_Menu.return_to_main_menu(self))
+
         # Place the back button in the window
-        back_button.grid(row = 2, column = 2, sticky = "nsew", padx = 5, pady = 5)
+        back_button.grid(row=2, column=2, sticky="nsew", padx=5, pady=5)
 
         # Set window close action to return to main menu rather than close the program
-        self.root.protocol("WM_DELETE_WINDOW", lambda: Main_Menu.return_to_main_menu(self))
+        self.root.protocol("WM_DELETE_WINDOW",
+                           lambda: Main_Menu.return_to_main_menu(self))
 
         # Sets the seeninstructions variable to true
         seen_instructions_state = True
@@ -392,10 +423,13 @@ class Instructions:
         # Loops the window
         self.root.mainloop()
 
-# Creating the Settings window class  
+# Creating the Settings window class
+
+
 class Settings:
     """ This class is used to create the Settings window
     """
+
     def __init__(self):
         """ Initialises the settings window
         """
@@ -403,14 +437,15 @@ class Settings:
         Standard_Window.__init__(self, 600, 500, 600, 500)
 
         # Creates a frame within the window and grids it
-        content = tk.Frame(self.root, padx = 12, pady = 12, bg = "#ff0000")
-        content.grid(column = 0, row = 0, sticky = "nsew")
-        
+        content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
+        content.grid(column=0, row=0, sticky="nsew")
+
         # Receives the title image from the assets folder and places in on the window
-        title_image = tk.PhotoImage(file = get_file_path("settingstitle.png"))
-        title_label = Standard_Window.title_label(content, image = title_image)
-        title_label.grid(row = 0, column = 0, columnspan = 4, sticky = "nsew", padx = 5, pady = 5)
-        
+        title_image = tk.PhotoImage(file=get_file_path("settingstitle.png"))
+        title_label = Standard_Window.title_label(content, image=title_image)
+        title_label.grid(row=0, column=0, columnspan=4,
+                         sticky="nsew", padx=5, pady=5)
+
         # Creates a list of images and spinboxes are to be used for the settings
         images = []
         self.spinboxes = []
@@ -418,48 +453,60 @@ class Settings:
         # For each button in the list of buttons, do the following
         for index, setting in enumerate(settings.items()):
             # Add the appropriate image to the list of images so that the image is stored in memory
-            images.append(tk.PhotoImage(file = get_file_path(setting[0] + ".png")))
+            images.append(tk.PhotoImage(
+                file=get_file_path(setting[0] + ".png")))
 
             # Create a label for the setting
-            setting_label = Standard_Window.standard_label(content, image = images[index])
+            setting_label = Standard_Window.standard_label(
+                content, image=images[index])
 
             # Places the label
-            setting_label.grid(row = index+1, column = 0, columnspan = 2, sticky = "nsew", padx = 5, pady = 5)
-            setting_spinbox = tk.Spinbox(content, from_ = setting[1]["min"], to = setting[1]["max"], width = 3, wrap = True, font = ("Trebuchet MS bold", 20), borderwidth = 10, background = "white", relief = "groove", validate = "key")
+            setting_label.grid(row=index+1, column=0,
+                               columnspan=2, sticky="nsew", padx=5, pady=5)
+            setting_spinbox = tk.Spinbox(content, from_=setting[1]["min"], to=setting[1]["max"], width=3, wrap=True, font=(
+                "Trebuchet MS bold", 20), borderwidth=10, background="white", relief="groove", validate="key")
 
             # Creates a variable which will store the value of the current setting
             setting_value = tk.IntVar()
             setting_value.set(setting[1]["value"])
-            setting_spinbox.config(textvariable = setting_value)
+            setting_spinbox.config(textvariable=setting_value)
 
             # Sets the validate command to testVal (see below)
-            setting_spinbox["validatecommand"] = (setting_spinbox.register(self.test_value), "%P", "%d")
-            
+            setting_spinbox["validatecommand"] = (
+                setting_spinbox.register(self.test_value), "%P", "%d")
+
             # Adds the spinbox to the list of spinboxes
             self.spinboxes.append(setting_spinbox)
-            
+
             # Places the spinbox in the window
-            setting_spinbox.grid(row = index+1, column = 3, sticky = "nsew", padx = 5, pady = 5)
+            setting_spinbox.grid(row=index+1, column=3,
+                                 sticky="nsew", padx=5, pady=5)
 
         # Creates a button which will reset all settings to default
-        set_to_default_image = tk.PhotoImage(file = get_file_path("settodefault.png"))
-        set_to_default_button = Standard_Window.button(content, image = set_to_default_image, command = lambda: self.reset_to_default())
-        set_to_default_button.grid(row = 5, column = 0, columnspan = 4, sticky = "nsew", padx = 5, pady = 5)
+        set_to_default_image = tk.PhotoImage(
+            file=get_file_path("settodefault.png"))
+        set_to_default_button = Standard_Window.button(
+            content, image=set_to_default_image, command=lambda: self.reset_to_default())
+        set_to_default_button.grid(
+            row=5, column=0, columnspan=4, sticky="nsew", padx=5, pady=5)
 
-        # Creates a button which will return to the main menu window 
-        done_image = tk.PhotoImage(file = get_file_path("done.png"))
-        back_button = tk.Button(content, borderwidth = 10, background = "white", relief = "groove", image = done_image, command = lambda: self.return_to_main_menu())
-        back_button.grid(row = 6, column = 0, columnspan = 4, sticky = "nsew", padx = 5, pady = 5)
+        # Creates a button which will return to the main menu window
+        done_image = tk.PhotoImage(file=get_file_path("done.png"))
+        back_button = tk.Button(content, borderwidth=10, background="white", relief="groove",
+                                image=done_image, command=lambda: self.return_to_main_menu())
+        back_button.grid(row=6, column=0, columnspan=4,
+                         sticky="nsew", padx=5, pady=5)
 
         # Set window close action to return to main menu rather than close the program
-        self.root.protocol("WM_DELETE_WINDOW", lambda: Main_Menu.return_to_main_menu(self))
+        self.root.protocol("WM_DELETE_WINDOW",
+                           lambda: Main_Menu.return_to_main_menu(self))
 
         # Configures the settings grid so that resizing the window works appropriately
         configure_grid(self, content)
 
         # Loops the Settings menu
         self.root.mainloop()
-    
+
     def test_value(self, character_added, action):
         """ This function is used to check if a character added to a spinbox is a valid intiger
 
@@ -470,10 +517,10 @@ class Settings:
         Returns:
             boolean: Whether the character is allowed to be added or not
         """
-         # If the action is insert character
+        # If the action is insert character
         if action == "1":
             # If the character is not a digit
-            if not character_added.isdigit(): 
+            if not character_added.isdigit():
                 # Return false and dont allow character to be typed
                 return False
         # Return true and allow character to be typed
@@ -482,7 +529,7 @@ class Settings:
     def reset_to_default(self):
         """ This function is used to reset all settings to default
         """
-        # References the global settings dictionary 
+        # References the global settings dictionary
         global settings
 
         # Runs the settings to default function
@@ -499,23 +546,23 @@ class Settings:
         global settings
 
         # Creates a variable which will be used to determine if any settings have been changed due to restrictions
-        things_changed = False 
+        things_changed = False
 
         # For each setting in settings
-        for index, setting in enumerate(settings.items()):            
+        for index, setting in enumerate(settings.items()):
             # If the value of the spinbox is less than the minimum value of the setting
             if int(self.spinboxes[index].get()) < setting[1]["min"]:
                 # Set the value of the setting to the minimum
                 setting[1]["value"] = setting[1]["min"]
-                
+
                 # Set the things changed variable to True
-                things_changed = True  
-            
+                things_changed = True
+
             # If the value of the spinbox is greater than the maximum value of the setting
             elif int(self.spinboxes[index].get()) > setting[1]["max"]:
                 # Set the value of the setting to the maximum
                 setting[1]["value"] = setting[1]["max"]
-                
+
                 # Set the things changed variable to True
                 things_changed = True
             # If the value of the spinbox is between the maximum and minimum value of the given setting
@@ -523,81 +570,87 @@ class Settings:
                 # Set the value of the setting to the value of the spinbox
                 setting[1]["value"] = int(self.spinboxes[index].get())
 
-        # If any no settings have been changed due to restrictions 
-        if not things_changed: 
+        # If any no settings have been changed due to restrictions
+        if not things_changed:
             # Closes the settings window and opens the main menu window
             Main_Menu.return_to_main_menu(self)
-        
+
         # If any settings have been changed due to restrictions
-        else: 
+        else:
             # Closes the settings window and opens the settings window again
             self.root.destroy()
             application.settings = Settings()
 
 # Creating the Main Menu class
+
+
 class Main_Menu:
     """ This class is used to create the Main Menu window
     """
+
     def __init__(self):
         """ Initialises the Main Menu window
         """
         # Creates a standard window
-        Standard_Window.__init__(self, 600, 400, 300, 400)        
+        Standard_Window.__init__(self, 600, 400, 300, 400)
 
         # Creates a frame within the window and grids it
-        content = tk.Frame(self.root, padx = 12, pady = 12, bg = "#ff0000")
-        content.grid(column = 0, row = 0, sticky = "nsew")
-        
+        content = tk.Frame(self.root, padx=12, pady=12, bg="#ff0000")
+        content.grid(column=0, row=0, sticky="nsew")
+
         # Receives the title image from the assets folder and places in on the window
-        title_image = tk.PhotoImage(file = get_file_path("title.png"))
-        title_label = Standard_Window.title_label(content, image = title_image)
-        title_label.grid(row = 0, column = 0, rowspan = 2, columnspan = 5, sticky = "nsew")
+        title_image = tk.PhotoImage(file=get_file_path("title.png"))
+        title_label = Standard_Window.title_label(content, image=title_image)
+        title_label.grid(row=0, column=0, rowspan=2,
+                         columnspan=5, sticky="nsew")
 
         # Creates a label underneath the title which will display the user"s high score
         score_text = "High Score: " + str(highscore)
-        score_label = Standard_Window.standard_label(content, text = score_text, font = ("Trebuchet MS bold", 12))
-        score_label.grid(row = 2, column = 2, sticky = "nsew", padx = 5, pady = 5)
+        score_label = Standard_Window.standard_label(
+            content, text=score_text, font=("Trebuchet MS bold", 12))
+        score_label.grid(row=2, column=2, sticky="nsew", padx=5, pady=5)
 
         # Creates a list of buttons which are to be created
         button_labels = ["start", "instructions", "settings", "quit"]
-        
+
         # Creates a list of images which are to be used for the buttons
         images = []
 
         # For each button in the list of buttons, do the following
         for index, button_label in enumerate(button_labels):
             # Add the appropriate image to the list of images so that the image is stored in memory
-            images.append(tk.PhotoImage(file = get_file_path(button_label + ".png")))
-            
+            images.append(tk.PhotoImage(
+                file=get_file_path(button_label + ".png")))
+
             # Create a button with this image
-            button = Standard_Window.button(content, image = images[index])
+            button = Standard_Window.button(content, image=images[index])
 
             # If the button is the start button, set the command to run the start() function
-            if button_label == "start": 
-                button.config(command = lambda: self.start_check())
+            if button_label == "start":
+                button.config(command=lambda: self.start_check())
             # If the button is the instructions button, set the command to run the instructions() function
             elif button_label == "instructions":
-                button.config(command = lambda: self.instructions("mainmenu"))
+                button.config(command=lambda: self.instructions("mainmenu"))
             # If the button is the settings button, set the command to run the settings() function
-            elif button_label == "settings": 
-                button.config(command = lambda: self.settings())
+            elif button_label == "settings":
+                button.config(command=lambda: self.settings())
             # If the button is the quit button, set the command to close the main menu
             elif button_label == "quit":
-                button.config(command = lambda: self.end_game())
+                button.config(command=lambda: self.end_game())
 
             # Place the button in descending order in the main menu window
-            button.grid(column = 2, row = index + 3, sticky = "nsew", padx = 5, pady = 5)
+            button.grid(column=2, row=index + 3, sticky="nsew", padx=5, pady=5)
 
         # Configure all columns and rows within the main menu window to expand to fill the window if resized
         configure_grid(self, content)
 
         # Creates a variable which will store the amount of windows open
-        Main_Menu.window_count = 0        
+        Main_Menu.window_count = 0
 
         # Create a list of all windows which are currently open
         Main_Menu.windows = []
 
-        # Permanently loop the main menu window 
+        # Permanently loop the main menu window
         self.root.mainloop()
 
     def start_check(self):
@@ -611,7 +664,7 @@ class Main_Menu:
         elif seen_instructions_state == False:
             # Start the instructions window with the after-action to start the game
             self.instructions("start")
-    
+
     def start_game(self):
         """ This function starts the game
         """
@@ -652,7 +705,7 @@ class Main_Menu:
                 continue
         # Open the main menu
         application = Main_Menu()
-    
+
     def instructions(self, after_action):
         """ This function will run when the instructions are to be opened
 
@@ -679,7 +732,7 @@ class Main_Menu:
         self.root.destroy()
         # Opens the main menu
         application = Main_Menu()
-    
+
     def end_game(self):
         """ This function is run when the game is to be closed
         """
@@ -687,6 +740,7 @@ class Main_Menu:
         self.root.destroy()
         # Runs the save data function
         save_data()
+
 
 # Starts the main menu
 application = Main_Menu()
